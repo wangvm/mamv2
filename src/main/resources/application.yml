@@ -1,0 +1,35 @@
+mybatis-plus:
+    configuration:
+        map-underscore-to-camel-case: false
+    global-config:
+        db-config:
+            logic-delete-field: deleted
+            logic-delete-value: 1
+            logic-not-delete-value: 0
+server:
+    port: 8080
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        name: defaultDataSource
+        password: asdfgh
+        url: jdbc:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
+        username: root
+    redis:
+        host: 192.168.111.128
+        password: asdfgh
+        port: 6379
+    security:
+        user:
+            name: javaboy
+            password: 123
+    elasticsearch:
+        rest:
+            uris: 192.168.111.128:9200
+            password: wajing
+    profiles:
+        active: prod
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 500MB

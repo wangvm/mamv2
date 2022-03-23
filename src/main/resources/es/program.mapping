@@ -1,0 +1,284 @@
+PUT /program
+{
+  "mappings": {
+    "properties": {
+      "aspectRatio": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "audioChannel": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "color": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "column": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "contributor": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "creator": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "debutDate": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "description": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      },
+      "menu": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "content": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "id": {
+            "type": "long"
+          },
+          "level": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "parent": {
+            "type": "long"
+          }
+        }
+      },
+      "outPoint": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "programType": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "sourceAcquiringMethed": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "sourceProvider": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "startPoint": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "system": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "taskId": {
+        "type": "long"
+      },
+      "title": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
