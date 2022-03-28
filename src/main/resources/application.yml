@@ -12,7 +12,7 @@ spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         name: defaultDataSource
-        password: asdfgh
+        password: wajing
         url: jdbc:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
         username: root
     redis:
