@@ -63,25 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     out.flush();
                     out.close();
                 });
-        //         .and().formLogin().permitAll().usernameParameter("account")
-        //         .successHandler((request, response, authentication) -> {
-        //             String account = (String) authentication.getPrincipal();
-        //             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        //             queryWrapper.select(User::getUsername, User::getAccount, User::getRole).eq(User::getAccount, account);
-        //             User user = userMapper.selectOne(queryWrapper);
-        //             response.setContentType("application/json; charset=UTF-8");
-        //             PrintWriter out = response.getWriter();
-        //             out.write(JSONObject.toJSONString(user));
-        //             out.flush();
-        //             out.close();
-        //         })
-        //         .failureHandler((request, response, exception) -> {
-        //             response.setContentType("application/json; charset=UTF-8");
-        //             PrintWriter out = response.getWriter();
-        //             out.write("账号或密码错误，请重试");
-        //             out.flush();
-        //             out.close();
-        //         })
 
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -93,11 +74,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 2.将这个组件注册到security中去
         auth.authenticationProvider(selfAuthenticationProvider);
         // auth.userDetailsService(userDetailsService);
-    }
-
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
     }
 
     @Bean

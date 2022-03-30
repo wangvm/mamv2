@@ -10,6 +10,7 @@ import edu.cuz.mamv2.service.ProjectService;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,12 @@ public class ProjectController {
         // 预处理，添加项目创建时间
         project.setCreateTime(System.currentTimeMillis());
         // 执行保存操作
-        boolean ret = projectService.save(project);
+        boolean ret;
+        try {
+            ret = projectService.save(project);
+        } catch (DuplicateKeyException e) {
+            return new BackMessage(BackEnum.PARAMETER_ERROR.getCode(),"项目已存在");
+        }
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
