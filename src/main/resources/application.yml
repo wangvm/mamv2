@@ -28,7 +28,7 @@ spring:
             uris: 192.168.111.128:9200
             password: wajing
     profiles:
-        active: prod
+        active: dev
     servlet:
         multipart:
             max-file-size: 500MB

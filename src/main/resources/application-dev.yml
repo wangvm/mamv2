@@ -1,1 +1,8 @@
 videoStoredPath: E:/Video/target/video/
+spring:
+    datasource:
+        driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+        name: defaultDataSource
+        password: wajing
+        url: jdbc:p6spy:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
+        username: root
