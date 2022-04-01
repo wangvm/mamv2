@@ -48,12 +48,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Page<User> queryUserList(Integer status, String order, Integer isAsc, Integer pageNumber, Integer pageSize) {
+    public Page<User> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("account", "username", "createTime")
                 .eq("deleted", status)
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<User> page = userMapper.selectPage(new Page<User>(pageNumber * pageSize, pageSize, true),
+        Page<User> page = userMapper.selectPage(new Page<User>(current, pageSize, true),
                 queryWrapper);
         return page;
     }

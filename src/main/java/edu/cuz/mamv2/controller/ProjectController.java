@@ -119,12 +119,12 @@ public class ProjectController {
     public BackMessage queryProjectList(@RequestParam(required = false, defaultValue = "0") Integer status,
                                         @RequestParam(required = false, defaultValue = "account") String order,
                                         @RequestParam(required = false, defaultValue = "1") Integer isAsc,
-                                        @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                        @RequestParam(required = false, defaultValue = "0") Integer current,
                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>();
         queryWrapper.eq("deleted", status)
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<Project> page = projectService.page(new Page<Project>(pageSize * pageNumber, pageSize),
+        Page<Project> page = projectService.page(new Page<Project>(current, pageSize),
                 queryWrapper);
         return new BackMessage(BackEnum.SUCCESS, page);
     }
@@ -132,9 +132,9 @@ public class ProjectController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/user")
     public BackMessage queryProjectListByUser(Integer account,
-                                              @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                              @RequestParam(required = false, defaultValue = "0") Integer current,
                                               @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        Page<Project> projects = projectService.queryProjectListByUser(account, pageNumber, pageSize);
+        Page<Project> projects = projectService.queryProjectListByUser(account, current, pageSize);
         long ret = projects.getSize();
         if (ret > 0) {
             return new BackMessage(BackEnum.SUCCESS, projects);

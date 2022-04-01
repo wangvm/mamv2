@@ -239,12 +239,12 @@ public class TaskController {
     public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "CATALOG") String status,
                                      @RequestParam(required = false, defaultValue = "account") String order,
                                      @RequestParam(required = false, defaultValue = "1") Integer isAsc,
-                                     @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                     @RequestParam(required = false, defaultValue = "0") Integer current,
                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<Task>();
         queryWrapper.eq("status", TaskState.valueOf(status).getCode())
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<Task> page = taskService.page(new Page<Task>(pageSize * pageNumber, pageSize),
+        Page<Task> page = taskService.page(new Page<Task>(current, pageSize),
                 queryWrapper);
         return new BackMessage(BackEnum.SUCCESS, page);
     }

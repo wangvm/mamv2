@@ -22,8 +22,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private ProjectMapper projectMapper;
 
     @Override
-    public Page<Project> queryProjectListByUser(Integer account, Integer pageNumber, Integer pageSize) {
-        Page<Object> page = new Page<>(pageNumber * pageSize, pageSize);
+    public Page<Project> queryProjectListByUser(Integer account, Integer current, Integer pageSize) {
+        Page<Object> page = new Page<>(current, pageSize);
         Page<Project> projects = projectMapper.selectUserProjectsPage(page, account);
         return projects;
     }

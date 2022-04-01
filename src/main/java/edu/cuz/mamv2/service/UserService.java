@@ -27,9 +27,9 @@ public interface UserService extends IService<User>, UserDetailsService {
      * @param status 用户状态，null：可用账户，1：全部账户，0：禁用账户
      * @param order 查询结果排序，默认为根据account排序
      * @param isAsc 排序方式，默认为desc降序，（aes升序）
-     * @param pageNumber 分页数
+     * @param current 当前页
      * @param pageSize 分页大小
      * @return 分页后的查询结果
      */
-    Page<User> queryUserList(Integer status, String order, Integer isAsc, Integer pageNumber, Integer pageSize);
+    Page<User> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize);
 }

@@ -144,7 +144,7 @@ public class UserController {
      * @param status 用户状态，null：可用账户，1：禁用账户，0：禁用账户
      * @param order 查询结果排序，默认根据account排序
      * @param isAsc 排序方式，默认为desc降序
-     * @param pageNumber 分页数
+     * @param current 分页数
      * @param pagesize 分页大小
      * @return 分页后的查询结果
      */
@@ -152,9 +152,9 @@ public class UserController {
     public BackMessage queryUserList(@RequestParam(required = false, defaultValue = "0") Integer status,
                                      @RequestParam(required = false, defaultValue = "account") String order,
                                      @RequestParam(required = false, defaultValue = "1") Integer isAsc,
-                                     @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                     @RequestParam(required = false, defaultValue = "0") Integer current,
                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        Page<User> users = userService.queryUserList(status, order, isAsc, pageNumber, pageSize);
+        Page<User> users = userService.queryUserList(status, order, isAsc, current, pageSize);
         return new BackMessage(BackEnum.SUCCESS, users);
     }
 }

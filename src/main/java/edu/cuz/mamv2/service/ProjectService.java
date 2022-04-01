@@ -16,9 +16,9 @@ public interface ProjectService extends IService<Project> {
     /**
      * 根据用户id查询用户所参与的项目列表
      * @param account 用户id
-     * @param pageNumber 分页数
+     * @param current 当前页
      * @param pageSize 分页大小
      * @return 项目列表
      */
-    Page<Project> queryProjectListByUser(Integer account, Integer pageNumber, Integer pageSize);
+    Page<Project> queryProjectListByUser(Integer account, Integer current, Integer pageSize);
 }
