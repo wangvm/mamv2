@@ -45,6 +45,10 @@ public class FileServiceImpl implements FileService {
     private final static String CONTENTTYPE = "video/mp4";
     @Value("${videoStoredPath}")
     private String videoStoredPath;
+    @Value("${imageStoredPath}")
+    private String imageStoredPath;
+    @Value("${serverPath}")
+    private String serverpath;
     @Resource
     private AsyncVideoService asyncVideoService;
     @Resource
@@ -73,11 +77,25 @@ public class FileServiceImpl implements FileService {
             // 提取视频元信息
             String videoInfoId = this.extractVideoInformation(target, originalFilename);
             // 异步执行提取音频并上传到云服务器提取音频文字——asyncVideoService.extractVideoSubtitles
-
             return new BackMessage().successWithMessage("上传文件成功");
         } else {
             return new BackMessage().failureWithMessage("格式错误");
         }
+    }
+
+    @Override
+    public BackMessage uploadKeyFrame(MultipartFile keyFrame) {
+        // 视频随机名称路径
+        String destination = getFilename(imageStoredPath);
+        File target = new File(destination);
+        try {
+            keyFrame.transferTo(target);
+            target.setReadable(true);
+        } catch (IOException e) {
+            log.info("文件保存失败：{}", e.getMessage());
+            return new BackMessage().failureWithMessage("上传失败请重试");
+        }
+        return new BackMessage().successWithMessageAndData("上传文件成功", serverpath + "images/" + target.getName());
     }
 
     @Override
@@ -98,8 +116,8 @@ public class FileServiceImpl implements FileService {
                 .analyzer("ik_smart")
                 .operator(Operator.OR));
         builder.query(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("fileName", filename)
-                .analyzer("ik_smart")
-                .operator(Operator.OR)))
+                        .analyzer("ik_smart")
+                        .operator(Operator.OR)))
                 //
                 .fetchSource(new String[]{"id", "fileName", "address"}, null)
                 // 分页
@@ -150,6 +168,7 @@ public class FileServiceImpl implements FileService {
             throw new CustomException("获取视频信息失败", 400);
         }
         VideoDTO videoDTO = new VideoDTO();
+        videoDTO.setAddress(serverpath + "vod/" + target.getName());
         videoDTO.setFileName(filename);
         videoDTO.setAspectRatio(info.getVideo().getSize());
         videoDTO.setFrameRate(info.getVideo().getFrameRate());

@@ -125,7 +125,7 @@ public class ProgramDTO implements Serializable {
     @Field(index = false)
     private Attributes outPoint;
     /**
-     * 关键帧,alias：关键帧别名，value：关键帧图片地址
+     * 关键帧, value：关键帧图片地址
      */
     @Field(index = false)
     private List<Attributes> keyFrames;

@@ -39,4 +39,10 @@ public class FileController {
         BackMessage backMessage = videoService.searchVideoByName(filename, pageIndex, pageSize);
         return backMessage;
     }
+
+    @PostMapping("/upload/keyframe")
+    public BackMessage uploadKeyFrame(@RequestBody MultipartFile keyFrame){
+        BackMessage backMessage = videoService.uploadKeyFrame(keyFrame);
+        return backMessage;
+    }
 }

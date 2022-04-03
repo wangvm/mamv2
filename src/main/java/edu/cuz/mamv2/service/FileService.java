@@ -33,4 +33,11 @@ public interface FileService {
      * @return
      */
     BackMessage searchVideoByName(String filename, Integer pageIndex, Integer pageSize);
+
+    /**
+     * 上传关键帧
+     * @param keyFrame 关键帧图片
+     * @return
+     */
+    BackMessage uploadKeyFrame(MultipartFile keyFrame);
 }
