@@ -201,6 +201,8 @@ public class TaskController {
             Task target = taskService.getOne(queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
+            }else{
+                return new BackMessage(200, "项目暂无任务");
             }
         }
         return new BackMessage(BackEnum.BAD_REQUEST);
