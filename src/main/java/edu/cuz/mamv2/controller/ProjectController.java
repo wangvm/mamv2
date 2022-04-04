@@ -37,7 +37,7 @@ public class ProjectController {
         try {
             ret = projectService.save(project);
         } catch (DuplicateKeyException e) {
-            return new BackMessage(BackEnum.PARAMETER_ERROR.getCode(),"项目已存在");
+            return new BackMessage(BackEnum.DATA_ERROR.getCode(),"项目已存在");
         }
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);

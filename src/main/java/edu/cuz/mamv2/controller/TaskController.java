@@ -80,6 +80,7 @@ public class TaskController {
     }
 
     //    更改所属项目 /task/update/project
+    @Deprecated
     @PostMapping("/update/project")
     public BackMessage updateProject(@RequestBody Task task) {
         Long name = task.getProject();
@@ -94,6 +95,17 @@ public class TaskController {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
             return new BackMessage(BackEnum.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/update")
+    public BackMessage updateTaskInfo(@RequestBody Task task){
+        boolean ret = taskService.updateById(task);
+        if (ret){
+            return new BackMessage(BackEnum.SUCCESS);
+        }else {
+            return new BackMessage(BackEnum.DATA_ERROR);
         }
     }
 
@@ -197,7 +209,8 @@ public class TaskController {
     public BackMessage queryByProject(Integer projectId) {
         if (ObjectUtil.isNotEmpty(projectId)) {
             LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(Task::getProject, projectId);
+            queryWrapper.eq(Task::getProject, projectId)
+                    .orderByDesc(Task::getCreateTime);
             Task target = taskService.getOne(queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);

@@ -73,7 +73,7 @@ public class UserController {
     public BackMessage deleteUser(@RequestBody User user) {
         String account = user.getAccount();
         if (account == null) {
-            return new BackMessage(BackEnum.PARAMETER_ERROR);
+            return new BackMessage(BackEnum.DATA_ERROR);
         }
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("account", account);
@@ -134,7 +134,7 @@ public class UserController {
                 .select(User::getAccount, User::getUsername, User::getCreateTime);
         User user = userService.getOne(queryWrapper);
         if (user == null) {
-            return new BackMessage(BackEnum.PARAMETER_ERROR);
+            return new BackMessage(BackEnum.DATA_ERROR);
         }
         return new BackMessage(BackEnum.SUCCESS, user);
     }
