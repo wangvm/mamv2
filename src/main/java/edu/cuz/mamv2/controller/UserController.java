@@ -18,6 +18,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 媒资用户表 前端控制器
@@ -35,8 +37,8 @@ public class UserController {
     private final RedisTemplate redisTemplate;
 
     @GetMapping("/test")
-    public BackMessage test(String value){
-        return new BackMessage(BackEnum.SUCCESS,value);
+    public BackMessage test(String value) {
+        return new BackMessage(BackEnum.SUCCESS, value);
     }
 
     @PostMapping("/add")
@@ -137,6 +139,26 @@ public class UserController {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
         return new BackMessage(BackEnum.SUCCESS, user);
+    }
+
+    @GetMapping("/query/cataloger")
+    public BackMessage queryCatalogerByName(String username) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getRole, "ROLE_CATALOGER")
+                .like(User::getUsername, username)
+                .select(User::getAccount, User::getUsername);
+        List<User> userList = userService.list(queryWrapper);
+        return new BackMessage(BackEnum.SUCCESS, userList);
+    }
+
+    @GetMapping("/query/auditor")
+    public BackMessage queryAuditorByName(String username) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getRole, "ROLE_AUDITOR")
+                .like(User::getUsername, username)
+                .select(User::getAccount, User::getUsername);
+        List<User> userList = userService.list(queryWrapper);
+        return new BackMessage(BackEnum.SUCCESS, userList);
     }
 
     /**
