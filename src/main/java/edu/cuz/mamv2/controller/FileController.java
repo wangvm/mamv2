@@ -14,34 +14,34 @@ import javax.annotation.Resource;
  */
 @RestController
 @Slf4j
-@RequestMapping("/video")
+@RequestMapping("/file")
 public class FileController {
     @Resource
     private FileService videoService;
 
-    @PostMapping("/upload")
+    @PostMapping("/upload/video")
     public BackMessage uploadVideo(@RequestBody MultipartFile uploadVideo) {
         BackMessage backMessage = videoService.uploadVideo(uploadVideo);
         return backMessage;
     }
 
-    @GetMapping("/videolist")
-    public BackMessage getVideoList(@RequestParam(defaultValue = "10") Integer pageSize,
-                                    @RequestParam(defaultValue = "0") Integer pageIndex) {
-        BackMessage videoList = videoService.getVideoList(pageSize, pageIndex);
+    @GetMapping("/videoList")
+    public BackMessage getVideoList(@RequestParam(defaultValue = "5") Integer pageSize,
+                                    @RequestParam(defaultValue = "1") Integer pageIndex) {
+        BackMessage videoList = videoService.getVideoList(pageSize, pageIndex - 1);
         return videoList;
     }
 
     @GetMapping("/search")
     public BackMessage searchVideoByName(@RequestParam String filename,
                                          @RequestParam(defaultValue = "5") Integer pageSize,
-                                         @RequestParam(defaultValue = "0") Integer pageIndex) {
-        BackMessage backMessage = videoService.searchVideoByName(filename, pageIndex, pageSize);
+                                         @RequestParam(defaultValue = "1") Integer pageIndex) {
+        BackMessage backMessage = videoService.searchVideoByName(filename, pageIndex - 1, pageSize);
         return backMessage;
     }
 
     @PostMapping("/upload/keyframe")
-    public BackMessage uploadKeyFrame(@RequestBody MultipartFile keyFrame){
+    public BackMessage uploadKeyFrame(@RequestBody MultipartFile keyFrame) {
         BackMessage backMessage = videoService.uploadKeyFrame(keyFrame);
         return backMessage;
     }

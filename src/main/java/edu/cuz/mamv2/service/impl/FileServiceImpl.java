@@ -3,6 +3,7 @@ package edu.cuz.mamv2.service.impl;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 import edu.cuz.mamv2.entity.dto.VideoDTO;
+import edu.cuz.mamv2.extension.VideoExtenison;
 import edu.cuz.mamv2.repository.VideoRepository;
 import edu.cuz.mamv2.service.FileService;
 import edu.cuz.mamv2.utils.BackEnum;
@@ -50,7 +51,7 @@ public class FileServiceImpl implements FileService {
     @Value("${serverPath}")
     private String serverpath;
     @Resource
-    private AsyncVideoService asyncVideoService;
+    private VideoExtenison videoExtenison;
     @Resource
     private VideoRepository videoRepository;
     @Resource
@@ -58,7 +59,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public BackMessage uploadVideo(MultipartFile uploadVideo) {
-        // 先保存文件
         if (CONTENTTYPE.equals(uploadVideo.getContentType())) {
             // 视频源文件名
             String originalFilename = uploadVideo.getOriginalFilename();
@@ -74,9 +74,10 @@ public class FileServiceImpl implements FileService {
                 log.info("文件保存失败：{}", e.getMessage());
                 return new BackMessage().failureWithMessage("上传失败请重试");
             }
-            // 提取视频元信息
-            String videoInfoId = this.extractVideoInformation(target, originalFilename);
-            // 异步执行提取音频并上传到云服务器提取音频文字——asyncVideoService.extractVideoSubtitles
+            // 提取视频元信息并保存到es中
+            String videoInfoId = extractVideoInformation(target, originalFilename);
+            // 对视频的扩展操作，计划实现异步执行提取音频并上传到云服务器提取音频文字
+            videoExtenison.handleVideo(videoInfoId, target);
             return new BackMessage().successWithMessage("上传文件成功");
         } else {
             return new BackMessage().failureWithMessage("格式错误");
@@ -174,6 +175,7 @@ public class FileServiceImpl implements FileService {
         videoDTO.setFrameRate(info.getVideo().getFrameRate());
         videoDTO.setDuration(info.getDuration());
         videoDTO.setAudioChannel(info.getAudio().getChannels());
+        // 保存视频信息到到es中
         VideoDTO save = videoRepository.save(videoDTO);
         return save.getId();
     }
