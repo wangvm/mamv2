@@ -49,7 +49,7 @@ public class LogInterceptorAop {
             params.append(Arrays.toString(args));
         }
         // 打印请求入参
-        log.info("接受请求, url:{}, method:{}, paramter:{}", request.getRequestURL(), request.getMethod(), params);
+        log.info("接受请求, url:{}, method:{}, paramter:{}", request.getRequestURL(), request.getMethod(), JSONObject.toJSONString(params));
         // 执行请求
         Object o = null;
         o = proceedingJoinPoint.proceed();

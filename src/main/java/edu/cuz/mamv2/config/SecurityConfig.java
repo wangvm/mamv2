@@ -6,10 +6,10 @@ import edu.cuz.mamv2.LoginFilter;
 import edu.cuz.mamv2.entity.User;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.provider.SelfAuthenticationProvider;
+import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,7 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter out = response.getWriter();
-                    out.write("请先登录");
+                    BackMessage backMessage = new BackMessage<>(BackEnum.UNAUTHORIZED);
+                    out.write(JSONObject.toJSONString(backMessage));
                     out.flush();
                     out.close();
                 })

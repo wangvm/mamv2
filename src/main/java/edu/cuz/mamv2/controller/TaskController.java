@@ -100,11 +100,11 @@ public class TaskController {
 
 
     @PostMapping("/update")
-    public BackMessage updateTaskInfo(@RequestBody Task task){
+    public BackMessage updateTaskInfo(@RequestBody Task task) {
         boolean ret = taskService.updateById(task);
-        if (ret){
+        if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
-        }else {
+        } else {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
     }
@@ -206,15 +206,17 @@ public class TaskController {
 
     //    归属项目查询
     @GetMapping("/query/project")
-    public BackMessage queryByProject(Integer projectId) {
+    public BackMessage queryByProject(@RequestParam(required = true) Integer projectId,
+                                      @RequestParam(required = false, defaultValue = "1") Integer current,
+                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         if (ObjectUtil.isNotEmpty(projectId)) {
             LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Task::getProject, projectId)
                     .orderByDesc(Task::getCreateTime);
-            Task target = taskService.getOne(queryWrapper);
+            Page<Task> target = taskService.page(new Page<Task>(current, pageSize), queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
-            }else{
+            } else {
                 return new BackMessage(200, "项目暂无任务");
             }
         }
