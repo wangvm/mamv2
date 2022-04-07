@@ -83,6 +83,22 @@ public class UserController {
         return new BackMessage(BackEnum.SUCCESS);
     }
 
+    @PostMapping("/update")
+    public BackMessage updateUserInfo(@RequestBody User user) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getAccount, user.getAccount());
+        boolean ret = userService.update(user, queryWrapper);
+        // 重新加密密码，加盐值
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encryptPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptPassword);
+        if (ret) {
+            return new BackMessage(BackEnum.SUCCESS);
+        } else {
+            return new BackMessage(BackEnum.DATA_ERROR);
+        }
+    }
+
     @PostMapping("/update/username")
     public BackMessage updateUsername(@RequestBody User user) {
         String username = user.getUsername();
@@ -139,6 +155,16 @@ public class UserController {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
         return new BackMessage(BackEnum.SUCCESS, user);
+    }
+
+    @GetMapping("/query/name")
+    public BackMessage queryUserByName(@RequestParam String username,
+                                       @RequestParam(required = false, defaultValue = "0") Integer current,
+                                       @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(User::getUsername, username);
+        Page<User> userList = userService.page(new Page<User>(current, pageSize), queryWrapper);
+        return new BackMessage(BackEnum.SUCCESS, userList);
     }
 
     @GetMapping("/query/cataloger")
