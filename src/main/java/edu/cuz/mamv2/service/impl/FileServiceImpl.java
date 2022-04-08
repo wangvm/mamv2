@@ -102,9 +102,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public BackMessage getVideoList(Integer pageSize, Integer pageIndex) {
         // 从es中查询视频列表
-        Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex,
-                pageSize));
-        return new BackMessage(BackEnum.SUCCESS, page.getContent());
+        Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
+        return new BackMessage(BackEnum.SUCCESS, page);
     }
 
     @Override

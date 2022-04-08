@@ -20,8 +20,8 @@ public class FileController {
     private FileService videoService;
 
     @PostMapping("/upload/video")
-    public BackMessage uploadVideo(@RequestBody MultipartFile uploadVideo) {
-        BackMessage backMessage = videoService.uploadVideo(uploadVideo);
+    public BackMessage uploadVideo(MultipartFile file) {
+        BackMessage backMessage = videoService.uploadVideo(file);
         return backMessage;
     }
 
@@ -41,8 +41,8 @@ public class FileController {
     }
 
     @PostMapping("/upload/keyframe")
-    public BackMessage uploadKeyFrame(@RequestBody MultipartFile keyFrame) {
-        BackMessage backMessage = videoService.uploadKeyFrame(keyFrame);
+    public BackMessage uploadKeyFrame(MultipartFile file) {
+        BackMessage backMessage = videoService.uploadKeyFrame(file);
         return backMessage;
     }
 }

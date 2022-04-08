@@ -1,10 +1,10 @@
 videoStoredPath: E:/Video/target/video/
 imageStoredPath: E:/Video/target/images/
 serverPath: http://192.168.111.128/
-spring:
-    datasource:
-        driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-        name: defaultDataSource
-        password: wajing
-        url: jdbc:p6spy:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
-        username: root
+#spring:
+#    datasource:
+#        driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+#        name: defaultDataSource
+#        password: wajing
+#        url: jdbc:p6spy:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
+#        username: root
