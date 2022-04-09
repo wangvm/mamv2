@@ -39,10 +39,8 @@ public class TaskController {
         Task task = taskDTO.getTaskInfo();
         task.setCreateTime(System.currentTimeMillis());
         boolean ret = taskService.save(task);
-        // todo 添加初始化编目节目层数据操作
         VideoDTO videoInfo = taskDTO.getVideoInfo();
-        String filename = videoInfo.getFileName()
-                .replaceAll("\\\\\"<span style='color:red'>\\\\\"|\\\\\"</span>\\\\\"", "");
+        String filename = videoInfo.getFileName();
         ProgramDTO program = new ProgramDTO();
         program.setTaskId(task.getId());
         MenuDTO menuDTO = new MenuDTO();
@@ -50,7 +48,7 @@ public class TaskController {
         menuDTO.setCheck(0);
         menuDTO.setContent(filename);
         menuDTO.setLevel("节目层");
-        menuDTO.setParent(1L);
+        menuDTO.setParent(null);
         program.setMenu(menuDTO);
         program.setTitle(new Attributes(filename));
         program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
@@ -85,6 +83,7 @@ public class TaskController {
 
     @PostMapping("/delete")
     public BackMessage deleteTask(@RequestBody Task task) {
+        // todo 更改所有删除选项为物理删除
         Long id = task.getId();
         boolean ret = taskService.removeById(id);
         if (ret) {

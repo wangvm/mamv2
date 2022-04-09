@@ -45,4 +45,9 @@ public class FileController {
         BackMessage backMessage = videoService.uploadKeyFrame(file);
         return backMessage;
     }
+
+    // todo 删除视频接口
+    public BackMessage removeVideo(String videoName){
+        return null;
+    }
 }
