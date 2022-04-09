@@ -7,13 +7,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import edu.cuz.mamv2.entity.Task;
-import edu.cuz.mamv2.entity.dto.ValidationList;
+import edu.cuz.mamv2.entity.TaskDTO;
+import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.enums.TaskState;
+import edu.cuz.mamv2.repository.ProgramRepository;
 import edu.cuz.mamv2.service.TaskService;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -27,11 +31,38 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
     @Autowired
     private TaskService taskService;
+    @Resource
+    private ProgramRepository programRepository;
 
     @PostMapping("/add")
-    public BackMessage addTask(@RequestBody Task task) {
+    public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
+        Task task = taskDTO.getTaskInfo();
         task.setCreateTime(System.currentTimeMillis());
         boolean ret = taskService.save(task);
+        // todo 添加初始化编目节目层数据操作
+        VideoDTO videoInfo = taskDTO.getVideoInfo();
+        String filename = videoInfo.getFileName()
+                .replaceAll("\\\\\"<span style='color:red'>\\\\\"|\\\\\"</span>\\\\\"", "");
+        ProgramDTO program = new ProgramDTO();
+        program.setTaskId(task.getId());
+        MenuDTO menuDTO = new MenuDTO();
+        menuDTO.setId(1L);
+        menuDTO.setCheck(0);
+        menuDTO.setContent(filename);
+        menuDTO.setLevel("节目层");
+        menuDTO.setParent(1L);
+        program.setMenu(menuDTO);
+        program.setTitle(new Attributes(filename));
+        program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
+        program.setAudioChannel(new Attributes(videoInfo.getAudioChannel().toString()));
+        ProgramDTO b = programRepository.findByTaskId(program.getTaskId());
+        if (b != null) {
+            return new BackMessage().failureWithMessage("任务已存在");
+        }
+        ProgramDTO save = programRepository.save(program);
+        if (save == null) {
+            return new BackMessage().failureWithMessage("添加失败，请重试");
+        }
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {

@@ -22,4 +22,12 @@ public class Attributes implements Serializable {
      */
     @Field(type = FieldType.Integer)
     private Integer check;
+
+    public Attributes(){
+
+    }
+
+    public Attributes(String value){
+        this.value = value;
+    }
 }

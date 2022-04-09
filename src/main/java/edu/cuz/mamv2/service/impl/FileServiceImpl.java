@@ -18,8 +18,6 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -34,7 +32,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * @author VM
@@ -118,17 +115,16 @@ public class FileServiceImpl implements FileService {
         builder.query(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("fileName", filename)
                         .analyzer("ik_smart")
                         .operator(Operator.OR)))
-                //
-                .fetchSource(new String[]{"id", "fileName", "address"}, null)
+                // .fetchSource(new String[]{"id", "fileName", "address"}, null)
                 // 分页
                 .from(pageIndex).size(pageSize)
                 // 排序
-                .sort("_score", SortOrder.DESC)
+                .sort("_score", SortOrder.DESC);
                 // 查询结果高亮
-                .highlighter(new HighlightBuilder().field("*")
-                        .requireFieldMatch(false)
-                        .preTags("\"<span style='color:red'>\"")
-                        .postTags("\"</span>\""));
+                // .highlighter(new HighlightBuilder().field("*")
+                //         .requireFieldMatch(false)
+                //         .preTags("\"<span style='color:red'>\"")
+                //         .postTags("\"</span>\""));
         // 构建查询请求
         SearchRequest request = new SearchRequest("videoinfo");
         request.source(builder);
@@ -146,10 +142,10 @@ public class FileServiceImpl implements FileService {
         // 组装查询结果
         ArrayList<VideoDTO> videos = new ArrayList<>();
         for (SearchHit hit: response.getHits().getHits()) {
-            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+            // Map<String, HighlightField> highlightFields = hit.getHighlightFields();
             VideoDTO videoDTO = JSONObject.parseObject(hit.getSourceAsString(), VideoDTO.class);
             // 关键词高亮替换
-            videoDTO.setFileName(highlightFields.get("fileName").fragments()[0].toString());
+            // videoDTO.setFileName(highlightFields.get("fileName").fragments()[0].toString());
             videos.add(videoDTO);
         }
         return new BackMessage(BackEnum.SUCCESS, videos);
