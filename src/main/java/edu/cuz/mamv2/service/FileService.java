@@ -40,4 +40,11 @@ public interface FileService {
      * @return
      */
     BackMessage uploadKeyFrame(MultipartFile keyFrame);
+
+    /**
+     * 获取视频信息
+     * @param name 名字
+     * @return {@link BackMessage}
+     */
+    BackMessage getVideoInfo(String name);
 }

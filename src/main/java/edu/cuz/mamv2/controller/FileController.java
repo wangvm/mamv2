@@ -40,6 +40,12 @@ public class FileController {
         return backMessage;
     }
 
+    @GetMapping("/videoInfo")
+    public BackMessage getVideoInfo(String name){
+        BackMessage backMessage = videoService.getVideoInfo(name);
+        return backMessage;
+    }
+
     @PostMapping("/upload/keyframe")
     public BackMessage uploadKeyFrame(MultipartFile file) {
         BackMessage backMessage = videoService.uploadKeyFrame(file);

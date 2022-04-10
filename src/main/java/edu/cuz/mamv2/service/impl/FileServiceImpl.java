@@ -59,6 +59,10 @@ public class FileServiceImpl implements FileService {
         if (CONTENTTYPE.equals(uploadVideo.getContentType())) {
             // 视频源文件名
             String originalFilename = uploadVideo.getOriginalFilename();
+            VideoDTO dto = videoRepository.findByFileName(originalFilename);
+            if (dto != null) {
+                return new BackMessage(BackEnum.DATA_ERROR);
+            }
             // 视频随机名称路径
             String destination = getFilename(videoStoredPath);
             File target = new File(destination);
@@ -97,6 +101,15 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public BackMessage getVideoInfo(String name) {
+        VideoDTO videoDTO = videoRepository.findByFileName(name);
+        if (videoDTO == null) {
+            return new BackMessage(BackEnum.DATA_ERROR);
+        }
+        return new BackMessage(BackEnum.SUCCESS, videoDTO);
+    }
+
+    @Override
     public BackMessage getVideoList(Integer pageSize, Integer pageIndex) {
         // 从es中查询视频列表
         Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
@@ -120,11 +133,11 @@ public class FileServiceImpl implements FileService {
                 .from(pageIndex).size(pageSize)
                 // 排序
                 .sort("_score", SortOrder.DESC);
-                // 查询结果高亮
-                // .highlighter(new HighlightBuilder().field("*")
-                //         .requireFieldMatch(false)
-                //         .preTags("\"<span style='color:red'>\"")
-                //         .postTags("\"</span>\""));
+        // 查询结果高亮
+        // .highlighter(new HighlightBuilder().field("*")
+        //         .requireFieldMatch(false)
+        //         .preTags("\"<span style='color:red'>\"")
+        //         .postTags("\"</span>\""));
         // 构建查询请求
         SearchRequest request = new SearchRequest("videoinfo");
         request.source(builder);
