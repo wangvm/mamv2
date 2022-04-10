@@ -34,7 +34,7 @@ PUT /fragment
           }
         }
       },
-      "decription": {
+      "description": {
         "properties": {
           "check": {
             "type": "long"
@@ -98,7 +98,7 @@ PUT /fragment
           }
         }
       },
-      "sourceAcquiringMethed": {
+      "sourceAcquiringMethod": {
         "properties": {
           "check": {
             "type": "long"

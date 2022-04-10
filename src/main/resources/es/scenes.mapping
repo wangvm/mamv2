@@ -2,7 +2,7 @@ PUT /scenes
 {
   "mappings": {
     "properties": {
-      "decription": {
+      "description": {
         "properties": {
           "check": {
             "type": "long"

@@ -31,7 +31,7 @@ public class ProgramDTO implements Serializable {
         this.aspectRatio = new Attributes();
         this.startPoint = new Attributes();
         this.outPoint = new Attributes();
-        this.sourceAcquiringMethed = new Attributes();
+        this.sourceAcquiringMethod = new Attributes();
         this.sourceProvider = new Attributes();
     }
 
@@ -133,7 +133,7 @@ public class ProgramDTO implements Serializable {
      * 资料获取方式
      */
     @Field(index = false)
-    private Attributes sourceAcquiringMethed;
+    private Attributes sourceAcquiringMethod;
     /**
      * 提供者
      */

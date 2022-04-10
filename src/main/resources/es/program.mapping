@@ -195,7 +195,7 @@ PUT /program
           }
         }
       },
-      "sourceAcquiringMethed": {
+      "sourceAcquiringMethod": {
         "properties": {
           "check": {
             "type": "long"

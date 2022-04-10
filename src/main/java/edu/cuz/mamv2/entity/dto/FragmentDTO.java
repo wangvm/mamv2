@@ -14,16 +14,16 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Document(indexName = "fragment", createIndex = false)
 public class FragmentDTO {
     public FragmentDTO() {
-        this.menu = new MenuDTO();
-        this.title = new Attributes();
-        this.decription = new Attributes();
-        this.creator = new Attributes();
-        this.contributor = new Attributes();
-        this.subtitleForm = new Attributes();
-        this.startPoint = new Attributes();
-        this.outPoint = new Attributes();
-        this.sourceAcquiringMethed = new Attributes();
-        this.sourceProvider = new Attributes();
+        menu = new MenuDTO();
+        title = new Attributes();
+        description = new Attributes();
+        creator = new Attributes();
+        contributor = new Attributes();
+        subtitleForm = new Attributes();
+        startPoint = new Attributes();
+        outPoint = new Attributes();
+        sourceAcquiringMethod = new Attributes();
+        sourceProvider = new Attributes();
     }
 
     /**
@@ -49,7 +49,7 @@ public class FragmentDTO {
      * 描述
      */
     @Field(index = true, analyzer = "ik_max_word")
-    private Attributes decription;
+    private Attributes description;
     /**
      * 创建者
      */
@@ -79,7 +79,7 @@ public class FragmentDTO {
      * 资料获取方式
      */
     @Field(index = false)
-    private Attributes sourceAcquiringMethed;
+    private Attributes sourceAcquiringMethod;
     /**
      * 提供者
      */
