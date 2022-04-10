@@ -74,6 +74,11 @@ public class Task implements Serializable {
     private Integer status;
 
     /**
+     * 视频信息id
+     */
+    private String videoInfoId;
+
+    /**
      * 逻辑删除控制位
      */
     private Integer deleted;

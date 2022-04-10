@@ -157,6 +157,7 @@ public class FileServiceImpl implements FileService {
         for (SearchHit hit: response.getHits().getHits()) {
             // Map<String, HighlightField> highlightFields = hit.getHighlightFields();
             VideoDTO videoDTO = JSONObject.parseObject(hit.getSourceAsString(), VideoDTO.class);
+            videoDTO.setId(hit.getId());
             // 关键词高亮替换
             // videoDTO.setFileName(highlightFields.get("fileName").fragments()[0].toString());
             videos.add(videoDTO);

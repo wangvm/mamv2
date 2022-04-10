@@ -37,9 +37,10 @@ public class TaskController {
     @PostMapping("/add")
     public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
         Task task = taskDTO.getTaskInfo();
-        task.setCreateTime(System.currentTimeMillis());
-        boolean ret = taskService.save(task);
         VideoDTO videoInfo = taskDTO.getVideoInfo();
+        task.setCreateTime(System.currentTimeMillis());
+        task.setVideoInfoId(videoInfo.getId());
+        boolean ret = taskService.save(task);
         String filename = videoInfo.getFileName();
         ProgramDTO program = new ProgramDTO();
         program.setTaskId(task.getId());
