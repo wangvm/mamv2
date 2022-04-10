@@ -15,6 +15,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -85,8 +88,6 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
                 if (dto == null) {
                     return new BackMessage().failureWithMessage("数据错误，不存在");
                 }
-                Long parentId = dto.getMenu().getId();
-                scenesRepository.deleteByMenuParent(parentId);
                 break;
             case "scenes":
                 scenesRepository.deleteByTaskId(catalogId);
@@ -183,5 +184,18 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             return new BackMessage().failureWithMessage("更新失败，请重试");
         }
         return new BackMessage(BackEnum.SUCCESS);
+    }
+
+    @Override
+    public BackMessage deleteBulkScenes(List<String> scenesList) {
+        DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest();
+        BulkByScrollResponse response = null;
+        try {
+            response = restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            log.info("批量删除场景层数据失败,message:{}", e.getMessage());
+            return new BackMessage(BackEnum.IO_ERROR);
+        }
+        return new BackMessage(BackEnum.SUCCESS, response);
     }
 }

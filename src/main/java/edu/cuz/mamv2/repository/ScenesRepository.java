@@ -9,5 +9,4 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  */
 public interface ScenesRepository extends ElasticsearchRepository<ScenesDTO, String> {
     void deleteByTaskId(String catalogId);
-    void deleteByMenuParent(Long parentId);
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -50,6 +51,12 @@ public class CatalogInfoController {
     public BackMessage deleteCatalogRecord(@PathVariable("record") String record,
                                            @RequestParam String catalogId) {
         BackMessage backMessage = catalogInfoService.deleteCatalogRecord(catalogId, record);
+        return backMessage;
+    }
+
+    @PostMapping("/delete/bulk/scenes")
+    public BackMessage deleteBulkScenes(@RequestBody List<String> scenesList) {
+        BackMessage backMessage = catalogInfoService.deleteBulkScenes(scenesList);
         return backMessage;
     }
 

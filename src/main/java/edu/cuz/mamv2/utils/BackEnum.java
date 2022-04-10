@@ -68,6 +68,11 @@ public enum BackEnum {
     UNKNOWN_ERROR(500, "服务未知错误"),
 
     /**
+     * io错误
+     */
+    IO_ERROR(501, "服务IO错误，请重试"),
+
+    /**
      * 服务器暂时处于超负载或正在进行停机维护，现在无法处理请求
      */
     SERVICE_UNAVAILABLE(503, "服务暂停服务");

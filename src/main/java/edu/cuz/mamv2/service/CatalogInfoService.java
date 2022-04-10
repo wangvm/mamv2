@@ -5,6 +5,8 @@ import edu.cuz.mamv2.entity.dto.ProgramDTO;
 import edu.cuz.mamv2.entity.dto.ScenesDTO;
 import edu.cuz.mamv2.utils.BackMessage;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -35,4 +37,6 @@ public interface CatalogInfoService {
     BackMessage updateFragmentRecord(FragmentDTO fragment);
 
     BackMessage updateScenesRecord(ScenesDTO scenese);
+
+    BackMessage deleteBulkScenes(List<String> scenesList);
 }
