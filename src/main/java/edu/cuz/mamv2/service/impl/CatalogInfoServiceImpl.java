@@ -9,7 +9,6 @@ import edu.cuz.mamv2.repository.ScenesRepository;
 import edu.cuz.mamv2.service.CatalogInfoService;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
-import edu.cuz.mamv2.entity.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -64,7 +63,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         if (save == null) {
             return new BackMessage().failureWithMessage("添加失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return new BackMessage(BackEnum.SUCCESS, save);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         if (save == null) {
             return new BackMessage().failureWithMessage("添加失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return new BackMessage(BackEnum.SUCCESS, save);
     }
 
     @Override
