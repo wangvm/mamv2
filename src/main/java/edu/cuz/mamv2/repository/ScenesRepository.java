@@ -8,5 +8,4 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * @date 2022/3/4 21:56
  */
 public interface ScenesRepository extends ElasticsearchRepository<ScenesDTO, String> {
-    void deleteByTaskId(String catalogId);
 }

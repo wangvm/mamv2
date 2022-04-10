@@ -8,7 +8,4 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * @date 2022/3/4 21:55
  */
 public interface FragmentRepository extends ElasticsearchRepository<FragmentDTO, String> {
-    void deleteByTaskId(String catalogId);
-
-
 }

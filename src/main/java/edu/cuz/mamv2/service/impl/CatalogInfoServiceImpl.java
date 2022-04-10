@@ -82,15 +82,10 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     public BackMessage deleteCatalogRecord(String catalogId, String record) {
         switch (record) {
             case "fragment":
-                Optional<FragmentDTO> fragmentDTO = fragmentRepository.findById(catalogId);
-                fragmentRepository.deleteByTaskId(catalogId);
-                FragmentDTO dto = fragmentDTO.get();
-                if (dto == null) {
-                    return new BackMessage().failureWithMessage("数据错误，不存在");
-                }
+                fragmentRepository.deleteById(catalogId);
                 break;
             case "scenes":
-                scenesRepository.deleteByTaskId(catalogId);
+                scenesRepository.deleteById(catalogId);
                 break;
             default:
                 return new BackMessage().failureWithMessage("删除类型不存在");
