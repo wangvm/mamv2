@@ -43,8 +43,8 @@ public interface FileService {
 
     /**
      * 获取视频信息
-     * @param name 名字
+     * @param taskId 名字
      * @return {@link BackMessage}
      */
-    BackMessage getVideoInfo(String name);
+    BackMessage getVideoInfo(String taskId);
 }

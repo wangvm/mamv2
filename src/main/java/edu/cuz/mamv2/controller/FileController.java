@@ -41,8 +41,8 @@ public class FileController {
     }
 
     @GetMapping("/videoInfo")
-    public BackMessage getVideoInfo(String name){
-        BackMessage backMessage = videoService.getVideoInfo(name);
+    public BackMessage getVideoInfo(String taskId){
+        BackMessage backMessage = videoService.getVideoInfo(taskId);
         return backMessage;
     }
 

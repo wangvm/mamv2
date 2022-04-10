@@ -2,8 +2,10 @@ package edu.cuz.mamv2.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
+import edu.cuz.mamv2.entity.Task;
 import edu.cuz.mamv2.entity.dto.VideoDTO;
 import edu.cuz.mamv2.extension.VideoExtenison;
+import edu.cuz.mamv2.mapper.TaskMapper;
 import edu.cuz.mamv2.repository.VideoRepository;
 import edu.cuz.mamv2.service.FileService;
 import edu.cuz.mamv2.utils.BackEnum;
@@ -32,6 +34,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * @author VM
@@ -53,6 +56,8 @@ public class FileServiceImpl implements FileService {
     private VideoRepository videoRepository;
     @Resource
     private RestHighLevelClient restHighLevelClient;
+    @Resource
+    private TaskMapper taskMapper;
 
     @Override
     public BackMessage uploadVideo(MultipartFile uploadVideo) {
@@ -101,9 +106,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public BackMessage getVideoInfo(String name) {
-        VideoDTO videoDTO = videoRepository.findByFileName(name);
-        if (videoDTO == null) {
+    public BackMessage getVideoInfo(String taskId) {
+        Task task = taskMapper.selectById(taskId);
+        String videoInfoId = task.getVideoInfoId();
+        Optional<VideoDTO> videoDTO = videoRepository.findById(videoInfoId);
+        if (!videoDTO.isPresent()) {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
         return new BackMessage(BackEnum.SUCCESS, videoDTO);
