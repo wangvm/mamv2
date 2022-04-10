@@ -188,7 +188,9 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
 
     @Override
     public BackMessage deleteBulkScenes(List<String> scenesList) {
-        DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest();
+        DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest("scenes");
+        deleteByQueryRequest.setConflicts("proceed");
+        deleteByQueryRequest.setQuery(QueryBuilders.termsQuery("_id", scenesList));
         BulkByScrollResponse response = null;
         try {
             response = restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
