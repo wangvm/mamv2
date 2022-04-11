@@ -5,6 +5,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,23 +17,25 @@ import java.util.List;
 @Document(indexName = "program", createIndex = false)
 public class ProgramDTO implements Serializable {
     public ProgramDTO() {
-        this.menu = new MenuDTO();
-        this.title = new Attributes();
-        this.debutDate = new Attributes();
-        this.programType = new Attributes();
-        this.description = new Attributes();
-        this.creator = new Attributes();
-        this.contributor = new Attributes();
-        this.programType = new Attributes();
-        this.column = new Attributes();
-        this.color = new Attributes();
-        this.system = new Attributes();
-        this.audioChannel = new Attributes();
-        this.aspectRatio = new Attributes();
-        this.startPoint = new Attributes();
-        this.outPoint = new Attributes();
-        this.sourceAcquiringMethod = new Attributes();
-        this.sourceProvider = new Attributes();
+        menu = new MenuDTO();
+        title = new Attributes();
+        description = new Attributes();
+        debutDate = new Attributes();
+        programType = new Attributes();
+        creator = new Attributes();
+        contributor = new Attributes();
+        programForm = new Attributes();
+        column = new Attributes();
+        color = new Attributes();
+        system = new Attributes();
+        audioChannel = new Attributes();
+        aspectRatio = new Attributes();
+        subtitleForm = new Attributes();
+        startPoint = new Attributes();
+        outPoint = new Attributes();
+        keyFrames = new ArrayList<Frame>();
+        sourceAcquiringMethod = new Attributes();
+        sourceProvider = new Attributes();
     }
 
     /**
@@ -128,7 +131,7 @@ public class ProgramDTO implements Serializable {
      * 关键帧, value：关键帧图片地址
      */
     @Field(index = false)
-    private List<Attributes> keyFrames;
+    private List<Frame> keyFrames;
     /**
      * 资料获取方式
      */

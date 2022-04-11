@@ -14,6 +14,7 @@ import edu.cuz.mamv2.repository.ProgramRepository;
 import edu.cuz.mamv2.service.TaskService;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ import java.util.Optional;
  * @author VM
  * @since 2022/01/17 10:56
  */
+@Slf4j
 @RestController
 @RequestMapping("/task")
 public class TaskController {
@@ -55,6 +57,7 @@ public class TaskController {
         program.setTitle(new Attributes(filename));
         program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
         program.setAudioChannel(new Attributes(videoInfo.getAudioChannel().toString()));
+        log.info(program.toString());
         Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
         if (b.isPresent()) {
             return new BackMessage().failureWithMessage("任务已存在");
@@ -86,6 +89,7 @@ public class TaskController {
     @PostMapping("/delete")
     public BackMessage deleteTask(@RequestBody Task task) {
         // todo 更改所有删除选项为物理删除
+        // todo 删除时同时删除catalog
         Long id = task.getId();
         boolean ret = taskService.removeById(id);
         if (ret) {

@@ -36,4 +36,4 @@ spring:
             max-file-size: 500MB
             max-request-size: 500MB
     session:
-        timeout: 30m
+        timeout: 120m
