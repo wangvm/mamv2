@@ -69,6 +69,14 @@ public class CatalogInfoController {
         return backMessage;
     }
 
+    @GetMapping("/get/program")
+    public BackMessage getProgramRecord(@RequestParam(required = false) String catalogId,
+                                        @RequestParam(required = false) Long taskId) {
+        BackMessage backMessage = catalogInfoService.getProgramRecord(catalogId, taskId);
+        return backMessage;
+    }
+
+
     @GetMapping("/get/menu")
     public BackMessage getMenu(Integer taskId) {
         BackMessage backMessage = catalogInfoService.getMenu(taskId);

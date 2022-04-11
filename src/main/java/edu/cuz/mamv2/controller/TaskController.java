@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * <p>
@@ -54,8 +55,8 @@ public class TaskController {
         program.setTitle(new Attributes(filename));
         program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
         program.setAudioChannel(new Attributes(videoInfo.getAudioChannel().toString()));
-        ProgramDTO b = programRepository.findByTaskId(program.getTaskId());
-        if (b != null) {
+        Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
+        if (b.isPresent()) {
             return new BackMessage().failureWithMessage("任务已存在");
         }
         ProgramDTO save = programRepository.save(program);

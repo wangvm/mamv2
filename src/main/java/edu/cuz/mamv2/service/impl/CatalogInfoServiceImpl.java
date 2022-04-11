@@ -49,8 +49,8 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
 
     @Override
     public BackMessage addProgramRecord(ProgramDTO program) {
-        ProgramDTO b = programRepository.findByTaskId(program.getTaskId());
-        if (b != null) {
+        Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
+        if (b.isPresent()) {
             return new BackMessage().failureWithMessage("任务已存在");
         }
         ProgramDTO save = programRepository.save(program);
@@ -96,13 +96,6 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     @Override
     public BackMessage getCatalogRecord(String record, String catalogId) {
         switch (record) {
-            case "program":
-                Optional<ProgramDTO> program = programRepository.findById(catalogId);
-                if (program.isPresent()) {
-                    return new BackMessage(BackEnum.SUCCESS, program);
-                } else {
-                    return new BackMessage().failureWithMessage("数据不存在");
-                }
             case "fragment":
                 Optional<FragmentDTO> fragment = fragmentRepository.findById(catalogId);
                 if (fragment.isPresent()) {
@@ -194,5 +187,23 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             return new BackMessage(BackEnum.IO_ERROR);
         }
         return new BackMessage(BackEnum.SUCCESS, response);
+    }
+
+    @Override
+    public BackMessage getProgramRecord(String catalogId, Long taskId) {
+        if (catalogId == null && taskId == null) {
+            return new BackMessage(BackEnum.BAD_REQUEST);
+        }
+        Optional<ProgramDTO> program;
+        if (catalogId == null) {
+            program = programRepository.findByTaskId(taskId);
+        } else {
+            program = programRepository.findById(catalogId);
+        }
+        if (program.isPresent()) {
+            return new BackMessage(BackEnum.SUCCESS, program);
+        } else {
+            return new BackMessage().failureWithMessage("数据不存在");
+        }
     }
 }

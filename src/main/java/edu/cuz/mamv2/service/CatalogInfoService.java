@@ -39,4 +39,6 @@ public interface CatalogInfoService {
     BackMessage updateScenesRecord(ScenesDTO scenese);
 
     BackMessage deleteBulkScenes(List<String> scenesList);
+
+    BackMessage getProgramRecord(String catalogId, Long taskId);
 }
