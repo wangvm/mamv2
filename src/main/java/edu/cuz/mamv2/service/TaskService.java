@@ -1,7 +1,9 @@
 package edu.cuz.mamv2.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.cuz.mamv2.entity.Task;
+import edu.cuz.mamv2.utils.BackMessage;
 
 /**
  * <p>
@@ -13,4 +15,13 @@ import edu.cuz.mamv2.entity.Task;
  */
 public interface TaskService extends IService<Task> {
 
+    /**
+     * 查询账户
+     * @param account 账户
+     * @param projectId 项目id
+     * @param current 当前
+     * @param pageSize 页面大小
+     * @return {@link BackMessage}
+     */
+    Page<Task> queryByAccount(String account, Integer projectId, Integer current, Integer pageSize);
 }

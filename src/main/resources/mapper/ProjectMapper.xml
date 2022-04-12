@@ -18,4 +18,5 @@
                or auditor = #{account}
         )
     </select>
+    <select id="selectProjectsPageByUser" resultType="edu.cuz.mamv2.entity.Project"></select>
 </mapper>

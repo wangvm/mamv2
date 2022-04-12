@@ -20,5 +20,5 @@ public interface ProjectService extends IService<Project> {
      * @param pageSize 分页大小
      * @return 项目列表
      */
-    Page<Project> queryProjectListByUser(Integer account, Integer current, Integer pageSize);
+    Page<Project> queryProjectListByUser(String account, Integer current, Integer pageSize);
 }

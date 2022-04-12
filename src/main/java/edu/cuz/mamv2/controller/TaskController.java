@@ -259,6 +259,14 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
+    @GetMapping("/query/user")
+    public BackMessage queryByAccount(String account, Integer projectId,
+                                      @RequestParam(required = false, defaultValue = "1") Integer current,
+                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+        Page<Task> page = taskService.queryByAccount(account, projectId, current, pageSize);
+        return new BackMessage(BackEnum.SUCCESS, page);
+    }
+
     //    编目员查询
     @GetMapping("/query/cataloger")
     public BackMessage queryByCataloger(Integer catalogerId) {
@@ -289,7 +297,7 @@ public class TaskController {
 
     //    状态查询 0：编目中、1：审核中、2：完成
     @GetMapping("/query/status")
-    public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "CATALOG") String status,
+    public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "编目中") String status,
                                      @RequestParam(required = false, defaultValue = "account") String order,
                                      @RequestParam(required = false, defaultValue = "1") Integer isAsc,
                                      @RequestParam(required = false, defaultValue = "0") Integer current,

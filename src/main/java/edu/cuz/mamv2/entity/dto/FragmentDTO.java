@@ -5,6 +5,8 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.util.List;
+
 /**
  * 片段层实体
  * @author VM
@@ -85,6 +87,11 @@ public class FragmentDTO {
      */
     @Field(index = false)
     private Attributes sourceProvider;
+    /**
+     * 关键帧, value：关键帧图片地址
+     */
+    @Field(index = false)
+    private List<Frame> keyFrames;
     /**
      * 提取的字幕
      */

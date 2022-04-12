@@ -103,7 +103,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
                 response.setContentType("application/json; charset=UTF-8");
                 PrintWriter out = response.getWriter();
-                out.write("账号或密码错误，请重试");
+                BackMessage<Object> backMessage = new BackMessage<>(BackEnum.LOGIN_FAILED);
+                out.write(JSONObject.toJSONString(backMessage));
                 out.flush();
                 out.close();
             }

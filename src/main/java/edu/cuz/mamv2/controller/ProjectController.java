@@ -37,7 +37,7 @@ public class ProjectController {
         try {
             ret = projectService.save(project);
         } catch (DuplicateKeyException e) {
-            return new BackMessage(BackEnum.DATA_ERROR.getCode(),"项目已存在");
+            return new BackMessage(BackEnum.DATA_ERROR.getCode(), "项目已存在");
         }
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
@@ -115,7 +115,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/query")
+    @GetMapping("/query/admin")
     public BackMessage queryProjectList(@RequestParam(required = false, defaultValue = "0") Integer status,
                                         @RequestParam(required = false, defaultValue = "account") String order,
                                         @RequestParam(required = false, defaultValue = "1") Integer isAsc,
@@ -129,9 +129,9 @@ public class ProjectController {
         return new BackMessage(BackEnum.SUCCESS, page);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('CATALOGER','AUDITOR')")
     @GetMapping("/query/user")
-    public BackMessage queryProjectListByUser(Integer account,
+    public BackMessage queryProjectListByUser(String account,
                                               @RequestParam(required = false, defaultValue = "0") Integer current,
                                               @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         Page<Project> projects = projectService.queryProjectListByUser(account, current, pageSize);

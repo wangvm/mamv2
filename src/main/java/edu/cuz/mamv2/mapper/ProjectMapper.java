@@ -22,5 +22,5 @@ public interface ProjectMapper extends BaseMapper<Project> {
      * @param account
      * @return
      */
-    Page<Project> selectUserProjectsPage(Page<?> page, @Param("account") Integer account);
+    Page<Project> selectUserProjectsPage(Page<?> page, @Param("account") String account);
 }

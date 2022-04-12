@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 
+import java.util.List;
+
 /**
  * 场景层实体
  * @author VM
@@ -13,12 +15,12 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Document(indexName = "scenes", createIndex = false)
 public class ScenesDTO {
     public ScenesDTO() {
-        this.menu = new MenuDTO();
-        this.title = new Attributes();
-        this.decription = new Attributes();
-        this.subtitleForm = new Attributes();
-        this.startPoint = new Attributes();
-        this.outPoint = new Attributes();
+        menu = new MenuDTO();
+        title = new Attributes();
+        description = new Attributes();
+        subtitleForm = new Attributes();
+        startPoint = new Attributes();
+        outPoint = new Attributes();
     }
 
     /**
@@ -44,7 +46,7 @@ public class ScenesDTO {
      * 描述
      */
     @Field(index = true, analyzer = "ik_max_word")
-    private Attributes decription;
+    private Attributes description;
     /**
      * 字母形式
      */
@@ -60,4 +62,9 @@ public class ScenesDTO {
      */
     @Field(index = false)
     private Attributes outPoint;
+    /**
+     * 关键帧, value：关键帧图片地址
+     */
+    @Field(index = false)
+    private List<Frame> keyFrames;
 }
