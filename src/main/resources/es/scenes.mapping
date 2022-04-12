@@ -82,6 +82,31 @@ PUT /scenes
           }
         }
       },
+      "keyFrames": {
+        "properties": {
+          "address": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "check": {
+            "type": "long"
+          },
+          "description": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
       "subtitleForm": {
         "properties": {
           "check": {

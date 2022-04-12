@@ -121,11 +121,44 @@ PUT /program
           },
           "value": {
             "type": "text",
-            "analyzer": "ik_max_word",
-            "search_analyzer": "ik_max_word",
             "fields": {
               "keyword": {
                 "type": "keyword"
+              }
+            },
+            "analyzer": "ik_max_word"
+          }
+        }
+      },
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "keyFrames": {
+        "properties": {
+          "address": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "check": {
+            "type": "long"
+          },
+          "description": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
               }
             }
           }
@@ -138,13 +171,12 @@ PUT /program
           },
           "content": {
             "type": "text",
-            "analyzer": "ik_max_word",
-            "search_analyzer": "ik_max_word",
             "fields": {
               "keyword": {
                 "type": "keyword"
               }
-            }
+            },
+            "analyzer": "ik_max_word"
           },
           "id": {
             "type": "long"
@@ -179,6 +211,22 @@ PUT /program
           }
         }
       },
+      "programForm": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
       "programType": {
         "properties": {
           "check": {
@@ -197,9 +245,6 @@ PUT /program
       },
       "sourceAcquiringMethod": {
         "properties": {
-          "check": {
-            "type": "long"
-          },
           "value": {
             "type": "text",
             "fields": {
@@ -243,6 +288,22 @@ PUT /program
           }
         }
       },
+      "subtitleForm": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
       "system": {
         "properties": {
           "check": {
@@ -269,13 +330,12 @@ PUT /program
           },
           "value": {
             "type": "text",
-            "analyzer": "ik_max_word",
-            "search_analyzer": "ik_max_word",
             "fields": {
               "keyword": {
                 "type": "keyword"
               }
-            }
+            },
+            "analyzer": "ik_max_word"
           }
         }
       }

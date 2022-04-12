@@ -69,9 +69,9 @@ public class Task implements Serializable {
     private String auditorName;
 
     /**
-     * 任务状态，0：创建、1：编目中、2：审核中、3：完成
+     * 任务状态，0：编目中、1：待修改、2：审核中、3：完成
      */
-    private Integer status;
+    private String status;
 
     /**
      * 视频信息id
