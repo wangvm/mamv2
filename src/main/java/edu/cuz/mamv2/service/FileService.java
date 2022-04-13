@@ -36,10 +36,11 @@ public interface FileService {
 
     /**
      * 上传关键帧
-     * @param keyFrame 关键帧图片
+     * @param cutTime 关键帧图片
+     * @param videoUrl
      * @return
      */
-    BackMessage uploadKeyFrame(MultipartFile keyFrame);
+    BackMessage keyFrameCut(Long cutTime, String videoUrl);
 
     /**
      * 获取视频信息

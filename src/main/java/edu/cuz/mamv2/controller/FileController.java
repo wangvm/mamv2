@@ -41,19 +41,20 @@ public class FileController {
     }
 
     @GetMapping("/videoInfo")
-    public BackMessage getVideoInfo(String taskId){
+    public BackMessage getVideoInfo(String taskId) {
         BackMessage backMessage = videoService.getVideoInfo(taskId);
         return backMessage;
     }
 
-    @PostMapping("/upload/keyframe")
-    public BackMessage uploadKeyFrame(MultipartFile file) {
-        BackMessage backMessage = videoService.uploadKeyFrame(file);
+    @GetMapping("/keyframe")
+    public BackMessage keyFrameCut(Long cutTime, String videoUrl) {
+        BackMessage backMessage = videoService.keyFrameCut(cutTime, videoUrl);
         return backMessage;
     }
 
-    // todo 删除视频接口
-    public BackMessage removeVideo(String videoName){
+    public BackMessage removeVideo(String videoName) {
         return null;
     }
+
+    // todo 删除视频接口
 }

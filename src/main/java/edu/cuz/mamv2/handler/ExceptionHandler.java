@@ -58,7 +58,7 @@ public class ExceptionHandler {
 
     @ResponseBody
     @org.springframework.web.bind.annotation.ExceptionHandler(AccessDeniedException.class)
-    public BackMessage resolveAccessDeniedException(Exception e){
+    public BackMessage resolveAccessDeniedException(Exception e) {
         log.info(e.getMessage());
         return new BackMessage(BackEnum.FORBIDDEN);
     }

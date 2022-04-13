@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
+import ws.schild.jave.ScreenExtractor;
 import ws.schild.jave.info.MultimediaInfo;
 
 import javax.annotation.Resource;
@@ -91,18 +92,21 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public BackMessage uploadKeyFrame(MultipartFile keyFrame) {
-        // 视频随机名称路径
-        String destination = getFilename(imageStoredPath);
-        File target = new File(destination);
+    public BackMessage keyFrameCut(Long cutTime, String videoUrl) {
+        String videName = videoUrl.substring(videoUrl.length() - 36);
+        File video = new File(videoStoredPath + videName);
+        MultimediaObject multimediaObject = new MultimediaObject(video);
+        ScreenExtractor extractor = new ScreenExtractor();
+        String filename = getFilename(imageStoredPath).replace(".mp4", ".png");
+        File file = new File(filename);
         try {
-            keyFrame.transferTo(target);
-            target.setReadable(true);
-        } catch (IOException e) {
-            log.info("文件保存失败：{}", e.getMessage());
-            return new BackMessage().failureWithMessage("上传失败请重试");
+            file.setReadable(true);
+            extractor.renderOneImage(multimediaObject, -1, -1, cutTime, file, 1, true);
+        } catch (EncoderException e) {
+            log.info("截图失败：{}", e.getMessage());
+            return new BackMessage(BackEnum.DATA_ERROR.getCode(), "截图失败，请确保视频没有错误");
         }
-        return new BackMessage().successWithMessageAndData("上传文件成功", serverpath + "images/" + target.getName());
+        return new BackMessage(BackEnum.SUCCESS, serverpath + "static/images/" + filename.substring(filename.length() - 36));
     }
 
     @Override
@@ -140,11 +144,6 @@ public class FileServiceImpl implements FileService {
                 .from(pageIndex).size(pageSize)
                 // 排序
                 .sort("_score", SortOrder.DESC);
-        // 查询结果高亮
-        // .highlighter(new HighlightBuilder().field("*")
-        //         .requireFieldMatch(false)
-        //         .preTags("\"<span style='color:red'>\"")
-        //         .postTags("\"</span>\""));
         // 构建查询请求
         SearchRequest request = new SearchRequest("videoinfo");
         request.source(builder);
@@ -162,11 +161,8 @@ public class FileServiceImpl implements FileService {
         // 组装查询结果
         ArrayList<VideoDTO> videos = new ArrayList<>();
         for (SearchHit hit: response.getHits().getHits()) {
-            // Map<String, HighlightField> highlightFields = hit.getHighlightFields();
             VideoDTO videoDTO = JSONObject.parseObject(hit.getSourceAsString(), VideoDTO.class);
             videoDTO.setId(hit.getId());
-            // 关键词高亮替换
-            // videoDTO.setFileName(highlightFields.get("fileName").fragments()[0].toString());
             videos.add(videoDTO);
         }
         return new BackMessage(BackEnum.SUCCESS, videos);
