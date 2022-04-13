@@ -1,3 +1,3 @@
-videoStoredPath: /usr/local/nginx/html/vod/
-imageStoredPath: /usr/local/nginx/html/images/
-serverPath: http://192.168.0.105/
+videoStoredPath: /opt/nginx/html/vod/
+imageStoredPath: /opt/nginx/html/static/images/
+serverPath: http://192.168.111.128/

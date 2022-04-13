@@ -19,7 +19,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("*")
-                        .allowedOrigins("http://localhost:8000")
+                        .allowedOrigins("http://192.168.111.128")
                         .allowCredentials(true)
                         .allowedHeaders("*")
                         .maxAge(3600);
