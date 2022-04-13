@@ -57,6 +57,8 @@ public class TaskController {
         program.setTitle(new Attributes(filename));
         program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
         program.setAudioChannel(new Attributes(videoInfo.getAudioChannel().toString()));
+        program.setStartPoint(new Attributes("0"));
+        program.setOutPoint(new Attributes(String.valueOf(videoInfo.getDuration() / 1000)));
         log.info(program.toString());
         Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
         if (b.isPresent()) {
@@ -181,14 +183,16 @@ public class TaskController {
         }
     }
 
-    //    提交审核  0->1
+    //    提交审核  编目中、待修改->审核中
     @GetMapping("/submit")
     public BackMessage submitAudit(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.PADDING.getCode())
-                    .eq(Task::getStatus, TaskState.CATALOG.getCode())
-                    .eq(Task::getId, taskId).update();
+                    .set(Task::getStatus, TaskState.PADDING.getState())
+                    .eq(Task::getId, taskId)
+                    .and(i -> i.eq(Task::getStatus, TaskState.CATALOG.getState())
+                            .or().eq(Task::getStatus, TaskState.MODEIFY.getState()))
+                    .update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
             }
@@ -196,13 +200,13 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    打回编目  1->0
+    //    打回编目  审核中->待修改
     @GetMapping("/reback")
     public BackMessage rebackCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.CATALOG.getCode())
-                    .eq(Task::getStatus, TaskState.PADDING.getCode())
+                    .set(Task::getStatus, TaskState.MODEIFY.getState())
+                    .eq(Task::getStatus, TaskState.PADDING.getState())
                     .eq(Task::getId, taskId).update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
@@ -211,13 +215,13 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    通过编目  1->2
+    //    通过编目  审核中->完成
     @GetMapping("/pass")
     public BackMessage passCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.PADDING.getCode())
-                    .eq(Task::getStatus, TaskState.FINISHED.getCode())
+                    .set(Task::getStatus, TaskState.PADDING.getState())
+                    .eq(Task::getStatus, TaskState.FINISHED.getState())
                     .eq(Task::getId, taskId).update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
@@ -303,7 +307,7 @@ public class TaskController {
                                      @RequestParam(required = false, defaultValue = "0") Integer current,
                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<Task>();
-        queryWrapper.eq("status", TaskState.valueOf(status).getCode())
+        queryWrapper.eq("status", TaskState.valueOf(status).getState())
                 .orderBy(true, isAsc > 0 ? true : false, order);
         Page<Task> page = taskService.page(new Page<Task>(current, pageSize),
                 queryWrapper);

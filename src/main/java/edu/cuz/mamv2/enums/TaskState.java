@@ -9,26 +9,25 @@ public enum TaskState {
     /**
      * 编目状态码
      */
-    CATALOG(0, "编目中"),
+    CATALOG("编目中"),
+    /**
+     * 待修改
+     */
+    MODEIFY("待修改"),
     /**
      * 审核状态码
      */
-    PADDING(1, "审核中"),
+    PADDING("审核中"),
     /**
      * 编目完成状态码
      */
-    FINISHED(2, "完成");
-    private Integer code;
+    FINISHED("完成");
     private String state;
 
-    TaskState(Integer code, String state) {
-        this.code = code;
+    TaskState(String state) {
         this.state = state;
     }
 
-    public Integer getCode() {
-        return code;
-    }
 
     public String getState() {
         return state;
