@@ -30,6 +30,7 @@ import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.ScreenExtractor;
 import ws.schild.jave.info.MultimediaInfo;
+import ws.schild.jave.info.VideoSize;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -183,7 +184,8 @@ public class FileServiceImpl implements FileService {
         VideoDTO videoDTO = new VideoDTO();
         videoDTO.setAddress(serverpath + "resource/video/" + target.getName());
         videoDTO.setFileName(filename);
-        videoDTO.setAspectRatio(info.getVideo().getSize());
+        VideoSize size = info.getVideo().getSize();
+        videoDTO.setAspectRatio(new edu.cuz.mamv2.entity.dto.VideoSize(size.getHeight(), size.getWidth()));
         videoDTO.setFrameRate(info.getVideo().getFrameRate());
         videoDTO.setDuration(info.getDuration());
         videoDTO.setAudioChannel(info.getAudio().getChannels());
