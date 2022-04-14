@@ -15,6 +15,7 @@ import edu.cuz.mamv2.utils.SecretUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,15 +32,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;
     private final RedisTemplate redisTemplate;
-
-    @GetMapping("/test")
-    public BackMessage test(String value) {
-        return new BackMessage(BackEnum.SUCCESS, value);
-    }
 
     @PostMapping("/add")
     public BackMessage addUser(@RequestBody User user) {

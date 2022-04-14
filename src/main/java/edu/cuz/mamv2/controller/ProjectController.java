@@ -28,6 +28,7 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public BackMessage addProject(@RequestBody Project project) {
         // 预处理，添加项目创建时间
@@ -46,6 +47,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
     public BackMessage deleteProject(@RequestBody Project project) {
         // 提取删除所需的数据：项目名称和id
@@ -58,6 +60,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/leader")
     public BackMessage updateLeader(@RequestBody Project project) {
         // 提取删除所需的数据：项目名称和id
@@ -75,6 +78,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
     public BackMessage updateProjectName(@RequestBody Project project) {
         Long id = project.getId();
@@ -89,6 +93,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/task/add")
     public BackMessage updateTaskNumber(Integer projectId) {
         boolean ret = projectService.lambdaUpdate()
@@ -102,6 +107,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/task/finished")
     public BackMessage finishedTask(Integer projectId) {
         boolean ret = projectService.lambdaUpdate()
@@ -115,6 +121,7 @@ public class ProjectController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/admin")
     public BackMessage queryProjectList(@RequestParam(required = false, defaultValue = "0") Integer status,
                                         @RequestParam(required = false, defaultValue = "account") String order,

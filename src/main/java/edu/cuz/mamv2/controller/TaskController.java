@@ -16,6 +16,7 @@ import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,8 @@ public class TaskController {
     @Resource
     private ProgramRepository programRepository;
 
+    // todo 设置权限验证
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
         Task task = taskDTO.getTaskInfo();
@@ -75,6 +78,7 @@ public class TaskController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addMany")
     public BackMessage addManyTask(@RequestBody ValidationList<Task> tasks) {
         for (Task task: tasks) {
@@ -88,6 +92,7 @@ public class TaskController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
     public BackMessage deleteTask(@RequestBody Task task) {
         // todo 更改所有删除选项为物理删除
@@ -102,6 +107,7 @@ public class TaskController {
     }
 
     //    更改任务名 /task/update/name
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
     public BackMessage updateName(@RequestBody Task task) {
         String name = task.getName();
@@ -136,7 +142,7 @@ public class TaskController {
         }
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
     public BackMessage updateTaskInfo(@RequestBody Task task) {
         boolean ret = taskService.updateById(task);
@@ -148,6 +154,7 @@ public class TaskController {
     }
 
     //    更改编目员
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/cataloger")
     public BackMessage updateCataloger(@RequestBody Task task) {
         Long name = task.getProject();
@@ -166,6 +173,7 @@ public class TaskController {
     }
 
     //    更改审核员
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/auditor")
     public BackMessage updateAuditor(@RequestBody Task task) {
         Long name = task.getProject();
@@ -184,6 +192,7 @@ public class TaskController {
     }
 
     //    提交审核  编目中、待修改->审核中
+    @PreAuthorize("hasRole('CATALOGER')")
     @GetMapping("/submit")
     public BackMessage submitAudit(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
@@ -201,6 +210,7 @@ public class TaskController {
     }
 
     //    打回编目  审核中->待修改
+    @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/reback")
     public BackMessage rebackCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
@@ -216,6 +226,7 @@ public class TaskController {
     }
 
     //    通过编目  审核中->完成
+    @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/pass")
     public BackMessage passCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
@@ -231,6 +242,7 @@ public class TaskController {
     }
 
     //    任务名查询
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/name")
     public BackMessage queryByName(String name) {
         if (ObjectUtil.isNotEmpty(name)) {
@@ -245,6 +257,7 @@ public class TaskController {
     }
 
     //    归属项目查询
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/project")
     public BackMessage queryByProject(@RequestParam(required = true) Integer projectId,
                                       @RequestParam(required = false, defaultValue = "1") Integer current,
@@ -263,6 +276,7 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
+    @PreAuthorize("hasAnyRole('CATALOGER','AUDITOR')")
     @GetMapping("/query/user")
     public BackMessage queryByAccount(String account, Integer projectId,
                                       @RequestParam(required = false, defaultValue = "1") Integer current,
@@ -272,6 +286,7 @@ public class TaskController {
     }
 
     //    编目员查询
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/cataloger")
     public BackMessage queryByCataloger(Integer catalogerId) {
         if (ObjectUtil.isNotEmpty(catalogerId)) {
@@ -286,6 +301,7 @@ public class TaskController {
     }
 
     //    审核员查询
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/auditor")
     public BackMessage queryByAuditor(Integer auditorId) {
         if (ObjectUtil.isNotEmpty(auditorId)) {
@@ -300,6 +316,7 @@ public class TaskController {
     }
 
     //    状态查询 0：编目中、1：审核中、2：完成
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/status")
     public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "编目中") String status,
                                      @RequestParam(required = false, defaultValue = "account") String order,

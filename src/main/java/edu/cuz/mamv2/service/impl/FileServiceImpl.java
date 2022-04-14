@@ -67,7 +67,7 @@ public class FileServiceImpl implements FileService {
             String originalFilename = uploadVideo.getOriginalFilename();
             VideoDTO dto = videoRepository.findByFileName(originalFilename);
             if (dto != null) {
-                return new BackMessage(BackEnum.DATA_ERROR);
+                return new BackMessage(BackEnum.DATA_ERROR.getCode(), "视频已存在");
             }
             // 视频随机名称路径
             String destination = getFilename(videoStoredPath);
@@ -100,8 +100,8 @@ public class FileServiceImpl implements FileService {
         String filename = getFilename(imageStoredPath).replace(".mp4", ".png");
         File target = new File(filename);
         try {
-            target.setReadable(true, false);
             extractor.renderOneImage(multimediaObject, -1, -1, cutTime, target, 1, true);
+            target.setReadable(true, false);
         } catch (EncoderException e) {
             log.info("截图失败：{}", e.getMessage());
             return new BackMessage(BackEnum.DATA_ERROR.getCode(), "截图失败，请确保视频没有错误");

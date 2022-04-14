@@ -47,7 +47,6 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     @Resource
     private RestHighLevelClient restHighLevelClient;
 
-    // todo 修改为使用mongodb存储，审核以后改为使用es存储
 
     @Override
     public BackMessage addProgramRecord(ProgramDTO program) {
