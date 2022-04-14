@@ -12,8 +12,7 @@ server:
     port: 8080
     servlet:
         session:
-            cookie:
-                max-age: 120M
+            timeout: 120m
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver

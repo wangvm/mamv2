@@ -2,8 +2,8 @@ package edu.cuz.mamv2.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.cuz.mamv2.LoginFilter;
 import edu.cuz.mamv2.entity.User;
+import edu.cuz.mamv2.filter.LoginFilter;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.provider.SelfAuthenticationProvider;
 import edu.cuz.mamv2.utils.BackEnum;
@@ -47,6 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().anyRequest().authenticated().and()
                 .exceptionHandling()
+                .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                    response.setContentType("application/json; charset=UTF-8");
+                    PrintWriter writer = response.getWriter();
+                    BackMessage<Object> message = new BackMessage<>(BackEnum.FORBIDDEN);
+                    writer.write(JSONObject.toJSONString(message));
+                    writer.flush();
+                    writer.close();
+                }))
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter out = response.getWriter();
@@ -74,7 +82,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 1.自定义一个userDetailService组件
         // 2.将这个组件注册到security中去
         auth.authenticationProvider(selfAuthenticationProvider);
-        // auth.userDetailsService(userDetailsService);
     }
 
     @Bean
@@ -89,6 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
                 queryWrapper.select(User::getUsername, User::getAccount, User::getRole).eq(User::getAccount, account);
                 User user = userMapper.selectOne(queryWrapper);
+                user.setPassword("");
                 response.setContentType("application/json; charset=UTF-8");
                 BackMessage backMessage = new BackMessage<User>().successWithMessageAndData("登录成功", user);
                 PrintWriter out = response.getWriter();

@@ -26,6 +26,8 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String account = authentication.getName();
         String password = (String) authentication.getCredentials();
+        // 在用户 service 中实现 @UserDetailsService#loadUserByUsername 方法
+        // 在其中使用数据查询获取用户信息
         UserDetails userDetails = userService.loadUserByUsername(account);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         boolean checkPassword = bCryptPasswordEncoder.matches(password, userDetails.getPassword());

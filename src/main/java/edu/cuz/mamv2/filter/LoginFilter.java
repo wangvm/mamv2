@@ -1,26 +1,18 @@
-package edu.cuz.mamv2;
+package edu.cuz.mamv2.filter;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.cuz.mamv2.entity.User;
-import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.CustomException;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +49,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                     username, password);
             setDetails(request, authRequest);
-            return this.getAuthenticationManager().authenticate(authRequest);
+            return getAuthenticationManager().authenticate(authRequest);
         } else {
             return super.attemptAuthentication(request, response);
         }

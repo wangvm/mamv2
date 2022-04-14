@@ -67,7 +67,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new CustomException(BackEnum.LOGIN_FAILED);
         }
-
         // 获取用户权限，并将其添加到GrantedAuthority中
         ArrayList<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
         SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getRole());
