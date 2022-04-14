@@ -61,6 +61,4 @@ public class FileController {
     public BackMessage removeVideo(String videoName) {
         return null;
     }
-
-    // todo 删除视频接口
 }

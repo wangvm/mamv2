@@ -15,11 +15,17 @@ import edu.cuz.mamv2.service.TaskService;
 import edu.cuz.mamv2.utils.BackEnum;
 import edu.cuz.mamv2.utils.BackMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -37,8 +43,9 @@ public class TaskController {
     private TaskService taskService;
     @Resource
     private ProgramRepository programRepository;
+    @Resource
+    private RestHighLevelClient restHighLevelClient;
 
-    // todo 设置权限验证
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
@@ -95,10 +102,15 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
     public BackMessage deleteTask(@RequestBody Task task) {
-        // todo 更改所有删除选项为物理删除
-        // todo 删除时同时删除catalog
         Long id = task.getId();
         boolean ret = taskService.removeById(id);
+        DeleteByQueryRequest request = new DeleteByQueryRequest("program", "fragment", "scenes");
+        request.setQuery(QueryBuilders.termQuery("taskId", id));
+        try {
+            BulkByScrollResponse response = restHighLevelClient.deleteByQuery(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
@@ -106,7 +118,6 @@ public class TaskController {
         }
     }
 
-    //    更改任务名 /task/update/name
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
     public BackMessage updateName(@RequestBody Task task) {
@@ -123,7 +134,6 @@ public class TaskController {
         }
     }
 
-    //    更改所属项目 /task/update/project
     @Deprecated
     @PostMapping("/update/project")
     public BackMessage updateProject(@RequestBody Task task) {
@@ -153,7 +163,6 @@ public class TaskController {
         }
     }
 
-    //    更改编目员
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/cataloger")
     public BackMessage updateCataloger(@RequestBody Task task) {
@@ -172,7 +181,6 @@ public class TaskController {
         }
     }
 
-    //    更改审核员
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/auditor")
     public BackMessage updateAuditor(@RequestBody Task task) {
@@ -191,7 +199,11 @@ public class TaskController {
         }
     }
 
-    //    提交审核  编目中、待修改->审核中
+    /**
+     * 提交审核  编目中、待修改->审核中
+     * @param taskId 任务id
+     * @return {@link BackMessage}
+     */
     @PreAuthorize("hasRole('CATALOGER')")
     @GetMapping("/submit")
     public BackMessage submitAudit(Integer taskId) {
@@ -209,7 +221,12 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    打回编目  审核中->待修改
+
+    /**
+     * 打回编目  审核中->待修改
+     * @param taskId 任务id
+     * @return {@link BackMessage}
+     */
     @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/reback")
     public BackMessage rebackCatalog(Integer taskId) {
@@ -225,7 +242,12 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    通过编目  审核中->完成
+
+    /**
+     * 通过编目  审核中->完成
+     * @param taskId 任务id
+     * @return {@link BackMessage}
+     */
     @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/pass")
     public BackMessage passCatalog(Integer taskId) {
@@ -241,7 +263,6 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    任务名查询
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/name")
     public BackMessage queryByName(String name) {
@@ -256,7 +277,6 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    归属项目查询
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/project")
     public BackMessage queryByProject(@RequestParam(required = true) Integer projectId,
@@ -285,7 +305,6 @@ public class TaskController {
         return new BackMessage(BackEnum.SUCCESS, page);
     }
 
-    //    编目员查询
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/cataloger")
     public BackMessage queryByCataloger(Integer catalogerId) {
@@ -300,7 +319,6 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    审核员查询
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/auditor")
     public BackMessage queryByAuditor(Integer auditorId) {
@@ -315,7 +333,6 @@ public class TaskController {
         return new BackMessage(BackEnum.BAD_REQUEST);
     }
 
-    //    状态查询 0：编目中、1：审核中、2：完成
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/status")
     public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "编目中") String status,
