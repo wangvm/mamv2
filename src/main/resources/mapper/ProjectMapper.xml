@@ -14,8 +14,9 @@
         where id in (
             select project
             from mam.mam_task
-            where cataloger = #{account}
-               or auditor = #{account}
+            where deleted = 0
+              and (cataloger = #{account}
+                or auditor = #{account})
         )
     </select>
     <select id="selectProjectsPageByUser" resultType="edu.cuz.mamv2.entity.Project"></select>

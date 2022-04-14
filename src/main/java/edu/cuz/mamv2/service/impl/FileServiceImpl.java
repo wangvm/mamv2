@@ -76,7 +76,7 @@ public class FileServiceImpl implements FileService {
                 // 保存视频
                 uploadVideo.transferTo(target);
                 // 设置上传视频的读取权限问题
-                target.setReadable(true);
+                target.setReadable(true, false);
             } catch (IOException e) {
                 log.info("文件保存失败：{}", e.getMessage());
                 return new BackMessage().failureWithMessage("上传失败请重试");
@@ -98,15 +98,15 @@ public class FileServiceImpl implements FileService {
         MultimediaObject multimediaObject = new MultimediaObject(video);
         ScreenExtractor extractor = new ScreenExtractor();
         String filename = getFilename(imageStoredPath).replace(".mp4", ".png");
-        File file = new File(filename);
+        File target = new File(filename);
         try {
-            file.setReadable(true);
-            extractor.renderOneImage(multimediaObject, -1, -1, cutTime, file, 1, true);
+            target.setReadable(true, false);
+            extractor.renderOneImage(multimediaObject, -1, -1, cutTime, target, 1, true);
         } catch (EncoderException e) {
             log.info("截图失败：{}", e.getMessage());
             return new BackMessage(BackEnum.DATA_ERROR.getCode(), "截图失败，请确保视频没有错误");
         }
-        return new BackMessage(BackEnum.SUCCESS, serverpath + "static/images/" + filename.substring(filename.length() - 36));
+        return new BackMessage(BackEnum.SUCCESS, serverpath + "resource/images/" + filename.substring(filename.length() - 36));
     }
 
     @Override
@@ -181,7 +181,7 @@ public class FileServiceImpl implements FileService {
             throw new CustomException("获取视频信息失败", 400);
         }
         VideoDTO videoDTO = new VideoDTO();
-        videoDTO.setAddress(serverpath + "vod/" + target.getName());
+        videoDTO.setAddress(serverpath + "resource/video/" + target.getName());
         videoDTO.setFileName(filename);
         videoDTO.setAspectRatio(info.getVideo().getSize());
         videoDTO.setFrameRate(info.getVideo().getFrameRate());
