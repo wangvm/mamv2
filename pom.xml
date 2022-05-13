@@ -18,6 +18,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>4.16.7</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-simple</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>p6spy</groupId>
             <artifactId>p6spy</artifactId>
             <version>3.9.1</version>
@@ -61,16 +72,16 @@
             <artifactId>jave-core</artifactId>
             <version>3.3.1</version>
         </dependency>
-        <!--<dependency>-->
-        <!--    <groupId>ws.schild</groupId>-->
-        <!--    <artifactId>jave-nativebin-win64</artifactId>-->
-        <!--    <version>3.2.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>ws.schild</groupId>
-            <artifactId>jave-nativebin-linux64</artifactId>
-            <version>3.3.1</version>
+            <artifactId>jave-nativebin-win64</artifactId>
+            <version>3.2.0</version>
         </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>ws.schild</groupId>-->
+        <!--    <artifactId>jave-nativebin-linux64</artifactId>-->
+        <!--    <version>3.3.1</version>-->
+        <!--</dependency>-->
         <!-- es -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

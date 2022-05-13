@@ -32,3 +32,5 @@ build/
 .vscode/
 deploy.ps1
 src/main/resources/application-self.yml
+/src/test/java/edu/cuz/mamv2/assert/test.mp4
+/src/test/java/edu/cuz/mamv2/assert/test.wav
