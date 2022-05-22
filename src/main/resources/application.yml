@@ -18,10 +18,10 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         name: defaultDataSource
         password: wajing
-        url: jdbc:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
+        url: jdbc:mysql://10.1.252.45:3306/mam?serverTimezone=UTC
         username: root
     redis:
-        host: 192.168.111.128
+        host: 10.1.252.45
         password: asdfgh
         port: 6379
     security:
@@ -30,7 +30,7 @@ spring:
             password: 123
     elasticsearch:
         rest:
-            uris: 192.168.111.128:9200
+            uris: 10.1.252.45:9200
             password: wajing
     profiles:
         active: prod

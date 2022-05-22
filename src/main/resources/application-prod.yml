@@ -1,3 +1,3 @@
 videoStoredPath: /dev/resource/video/
 imageStoredPath: /dev/resource/images/
-serverPath: http://192.168.111.128/
+serverPath: http://10.1.252.45/

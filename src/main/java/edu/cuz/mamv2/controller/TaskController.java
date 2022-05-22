@@ -237,6 +237,8 @@ public class TaskController {
                     .eq(Task::getId, taskId).update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
+            } else {
+                return new BackMessage(BackEnum.DATA_ERROR);
             }
         }
         return new BackMessage(BackEnum.BAD_REQUEST);
