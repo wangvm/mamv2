@@ -14,26 +14,8 @@ server:
         session:
             timeout: 120m
 spring:
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        name: defaultDataSource
-        password: wajing
-        url: jdbc:mysql://10.1.252.45:3306/mam?serverTimezone=UTC
-        username: root
-    redis:
-        host: 10.1.252.45
-        password: asdfgh
-        port: 6379
-    security:
-        user:
-            name: javaboy
-            password: 123
-    elasticsearch:
-        rest:
-            uris: 10.1.252.45:9200
-            password: wajing
     profiles:
-        active: prod
+        active: dev
         include: self
     servlet:
         multipart:

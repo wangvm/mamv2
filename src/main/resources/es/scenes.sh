@@ -1,4 +1,4 @@
-PUT /scenes
+curl -XPUT "http://127.0.0.1:9200/scenes" -H 'Content-Type: application/json' -d '
 {
   "mappings": {
     "properties": {
@@ -146,3 +146,4 @@ PUT /scenes
     }
   }
 }
+'

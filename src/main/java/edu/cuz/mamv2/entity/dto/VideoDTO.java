@@ -12,7 +12,6 @@ import org.springframework.data.elasticsearch.annotations.Mapping;
  * @date 2022/3/5 20:47
  */
 @Data
-@Mapping(mappingPath = "/es/video.mapping")
 @Document(indexName = "videoinfo", createIndex = true)
 public class VideoDTO {
 

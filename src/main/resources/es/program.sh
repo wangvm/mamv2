@@ -1,7 +1,71 @@
-PUT /fragment
+curl -XPUT 'http://127.0.0.1:9200/program' -H 'Content-Type: application/json' -d '
 {
   "mappings": {
     "properties": {
+      "aspectRatio": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "audioChannel": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "color": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "column": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
       "contributor": {
         "properties": {
           "check": {
@@ -34,12 +98,62 @@ PUT /fragment
           }
         }
       },
+      "debutDate": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
       "description": {
         "properties": {
           "check": {
             "type": "long"
           },
           "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            },
+            "analyzer": "ik_max_word"
+          }
+        }
+      },
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "keyFrames": {
+        "properties": {
+          "address": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "check": {
+            "type": "long"
+          },
+          "description": {
             "type": "text",
             "fields": {
               "keyword": {
@@ -57,13 +171,12 @@ PUT /fragment
           },
           "content": {
             "type": "text",
-            "analyzer": "ik_max_word",
             "fields": {
               "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
+                "type": "keyword"
               }
-            }
+            },
+            "analyzer": "ik_max_word"
           },
           "id": {
             "type": "long"
@@ -98,11 +211,40 @@ PUT /fragment
           }
         }
       },
-      "sourceAcquiringMethod": {
+      "programForm": {
         "properties": {
           "check": {
             "type": "long"
           },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "programType": {
+        "properties": {
+          "check": {
+            "type": "long"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "sourceAcquiringMethod": {
+        "properties": {
           "value": {
             "type": "text",
             "fields": {
@@ -162,24 +304,12 @@ PUT /fragment
           }
         }
       },
-      "taskId": {
-        "type": "long"
-      },
-      "keyFrames": {
+      "system": {
         "properties": {
-          "address": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          },
           "check": {
             "type": "long"
           },
-          "description": {
+          "value": {
             "type": "text",
             "fields": {
               "keyword": {
@@ -189,6 +319,9 @@ PUT /fragment
             }
           }
         }
+      },
+      "taskId": {
+        "type": "long"
       },
       "title": {
         "properties": {
@@ -197,16 +330,15 @@ PUT /fragment
           },
           "value": {
             "type": "text",
-            "analyzer": "ik_max_word",
             "fields": {
               "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
+                "type": "keyword"
               }
-            }
+            },
+            "analyzer": "ik_max_word"
           }
         }
       }
     }
   }
-}
+}'
