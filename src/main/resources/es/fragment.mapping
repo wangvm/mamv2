@@ -1,4 +1,4 @@
-PUT /fragment
+curl -XPUT "http://127.0.0.1:9200/fragment" -H 'Content-Type: application/json'
 {
   "mappings": {
     "properties": {

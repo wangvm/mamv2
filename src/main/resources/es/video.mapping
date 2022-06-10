@@ -1,4 +1,4 @@
-PUT /videoinfo
+curl -XPUT "http://127.0.0.1:9200/videoinfo" -H 'Content-Type: application/json'
 {
   "mappings": {
     "properties": {
