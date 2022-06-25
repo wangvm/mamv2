@@ -72,16 +72,16 @@
             <artifactId>jave-core</artifactId>
             <version>3.3.1</version>
         </dependency>
-        <dependency>
-            <groupId>ws.schild</groupId>
-            <artifactId>jave-nativebin-win64</artifactId>
-            <version>3.2.0</version>
-        </dependency>
         <!--<dependency>-->
         <!--    <groupId>ws.schild</groupId>-->
-        <!--    <artifactId>jave-nativebin-linux64</artifactId>-->
-        <!--    <version>3.3.1</version>-->
+        <!--    <artifactId>jave-nativebin-win64</artifactId>-->
+        <!--    <version>3.2.0</version>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-nativebin-linux64</artifactId>
+            <version>3.3.1</version>
+        </dependency>
         <!-- es -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

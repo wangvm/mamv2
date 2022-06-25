@@ -15,7 +15,7 @@ server:
             timeout: 120m
 spring:
     profiles:
-        active: dev
+        active: prod
         include: self
     servlet:
         multipart:
