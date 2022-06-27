@@ -1,0 +1,39 @@
+curl -XPUT "http://127.0.0.1:9200/videoinfo" -H 'Content-Type: application/json' -d '
+{
+  "mappings": {
+    "properties": {
+      "aspectRatio": {
+        "properties": {
+          "height": {
+            "type": "long"
+          },
+          "width": {
+            "type": "long"
+          }
+        }
+      },
+      "audioChannel": {
+        "type": "long"
+      },
+      "duration": {
+        "duration": {
+          "type": "long"
+        },
+        "fileName": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_max_word",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "frameRate": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}'
