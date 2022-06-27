@@ -1,23 +1,24 @@
 mybatis-plus:
-    configuration:
-        map-underscore-to-camel-case: false
-    global-config:
-        db-config:
-            logic-delete-field: deleted
-            logic-delete-value: 1
-            logic-not-delete-value: 0
-            update-strategy: not_null
+  configuration:
+    # 关闭驼峰转换
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      # 不为 null 才进行更新
+      update-strategy: not_null
 
 server:
-    port: 8080
-    servlet:
-        session:
-            timeout: 120m
+  port: 8080
+  servlet:
+    session:
+      timeout: 120m
+      cookie:
+        max-age: 120m
 spring:
-    profiles:
-        active: prod
-        include: self
-    servlet:
-        multipart:
-            max-file-size: 500MB
-            max-request-size: 500MB
+  profiles:
+    active: prod
+    include: self
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB

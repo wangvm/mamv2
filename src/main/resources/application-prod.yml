@@ -1,6 +1,6 @@
 videoStoredPath: /usr/local/nginx/html/resource/video/
 imageStoredPath: /usr/local/nginx/html/resource/images/
-serverPath: http://10.1.252.45/
+serverPath: http://mams.cuz.edu.cn/
 
 spring:
   datasource:
