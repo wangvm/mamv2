@@ -2,7 +2,7 @@ package edu.cuz.mamv2.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import edu.cuz.mamv2.entity.User;
+import edu.cuz.mamv2.entity.MamUser;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
  * @author VM
  * @since 2022/01/17 10:56
  */
-public interface UserService extends IService<User>, UserDetailsService {
+public interface UserService extends IService<MamUser>, UserDetailsService {
 
     /**
      * 批量添加用户
-     * @param users 待添加的用户列表，已验证
+     * @param mamUsers 待添加的用户列表，已验证
      */
-    void saveIgnoreBatch(List<User> users);
+    void saveIgnoreBatch(List<MamUser> mamUsers);
 
     /**
      * 根据指定条件查询用户列表
@@ -31,5 +31,5 @@ public interface UserService extends IService<User>, UserDetailsService {
      * @param pageSize 分页大小
      * @return 分页后的查询结果
      */
-    Page<User> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize);
+    Page<MamUser> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize);
 }

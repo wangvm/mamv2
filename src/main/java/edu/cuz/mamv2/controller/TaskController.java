@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import edu.cuz.mamv2.entity.Task;
+import edu.cuz.mamv2.entity.MamTask;
 import edu.cuz.mamv2.entity.TaskDTO;
 import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.enums.TaskState;
@@ -49,21 +49,21 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
-        Task task = taskDTO.getTaskInfo();
+        MamTask mamTask = taskDTO.getMamTaskInfo();
         VideoDTO videoInfo = taskDTO.getVideoInfo();
-        task.setCreateTime(System.currentTimeMillis());
-        task.setVideoInfoId(videoInfo.getId());
-        boolean ret = taskService.save(task);
+        mamTask.setCreateTime(System.currentTimeMillis());
+        mamTask.setVideoInfoId(videoInfo.getId());
+        boolean ret = taskService.save(mamTask);
         String filename = videoInfo.getFileName();
         ProgramDTO program = new ProgramDTO();
-        program.setTaskId(task.getId());
-        MenuDTO menuDTO = new MenuDTO();
-        menuDTO.setId(1L);
-        menuDTO.setCheck(0);
-        menuDTO.setContent(filename);
-        menuDTO.setLevel("节目层");
-        menuDTO.setParent(null);
-        program.setMenu(menuDTO);
+        program.setTaskId(mamTask.getId());
+        Menu menu = new Menu();
+        menu.setId(1L);
+        menu.setCheck(0);
+        menu.setContent(filename);
+        menu.setLevel("节目层");
+        menu.setParent(null);
+        program.setMenu(menu);
         program.setTitle(new Attributes(filename));
         program.setAspectRatio(new Attributes(videoInfo.getAspectRatio().asEncoderArgument()));
         program.setAudioChannel(new Attributes(videoInfo.getAudioChannel().toString()));
@@ -87,11 +87,11 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addMany")
-    public BackMessage addManyTask(@RequestBody ValidationList<Task> tasks) {
-        for (Task task: tasks) {
-            task.setCreateTime(System.currentTimeMillis());
+    public BackMessage addManyTask(@RequestBody ValidationList<MamTask> mamTasks) {
+        for (MamTask mamTask: mamTasks) {
+            mamTask.setCreateTime(System.currentTimeMillis());
         }
-        boolean ret = taskService.saveBatch(tasks);
+        boolean ret = taskService.saveBatch(mamTasks);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
@@ -101,8 +101,8 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
-    public BackMessage deleteTask(@RequestBody Task task) {
-        Long id = task.getId();
+    public BackMessage deleteTask(@RequestBody MamTask mamTask) {
+        Long id = mamTask.getId();
         boolean ret = taskService.removeById(id);
         DeleteByQueryRequest request = new DeleteByQueryRequest("program", "fragment", "scenes");
         request.setQuery(QueryBuilders.termQuery("taskId", id));
@@ -120,12 +120,12 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
-    public BackMessage updateName(@RequestBody Task task) {
-        String name = task.getName();
-        Long id = task.getId();
-        LambdaUpdateWrapper<Task> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(Task::getName, name)
-                .eq(Task::getId, id);
+    public BackMessage updateName(@RequestBody MamTask mamTask) {
+        String name = mamTask.getName();
+        Long id = mamTask.getId();
+        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(MamTask::getName, name)
+                .eq(MamTask::getId, id);
         boolean ret = taskService.update(updateWrapper);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
@@ -136,14 +136,14 @@ public class TaskController {
 
     @Deprecated
     @PostMapping("/update/project")
-    public BackMessage updateProject(@RequestBody Task task) {
-        Long name = task.getProject();
-        Long projectId = task.getProject();
-        String projectName = task.getProjectName();
-        LambdaUpdateWrapper<Task> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(Task::getName, name)
-                .set(Task::getProjectName, projectName)
-                .eq(Task::getProject, projectId);
+    public BackMessage updateProject(@RequestBody MamTask mamTask) {
+        Long name = mamTask.getProject();
+        Long projectId = mamTask.getProject();
+        String projectName = mamTask.getProjectName();
+        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(MamTask::getName, name)
+                .set(MamTask::getProjectName, projectName)
+                .eq(MamTask::getProject, projectId);
         boolean ret = taskService.update(updateWrapper);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
@@ -154,8 +154,8 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
-    public BackMessage updateTaskInfo(@RequestBody Task task) {
-        boolean ret = taskService.updateById(task);
+    public BackMessage updateTaskInfo(@RequestBody MamTask mamTask) {
+        boolean ret = taskService.updateById(mamTask);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
@@ -165,14 +165,14 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/cataloger")
-    public BackMessage updateCataloger(@RequestBody Task task) {
-        Long name = task.getProject();
-        Long cataloger = task.getCataloger();
-        String catalogerName = task.getCatalogerName();
-        LambdaUpdateWrapper<Task> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(Task::getName, name)
-                .set(Task::getProjectName, catalogerName)
-                .eq(Task::getProject, cataloger);
+    public BackMessage updateCataloger(@RequestBody MamTask mamTask) {
+        Long name = mamTask.getProject();
+        Long cataloger = mamTask.getCataloger();
+        String catalogerName = mamTask.getCatalogerName();
+        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(MamTask::getName, name)
+                .set(MamTask::getProjectName, catalogerName)
+                .eq(MamTask::getProject, cataloger);
         boolean ret = taskService.update(updateWrapper);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
@@ -183,14 +183,14 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/auditor")
-    public BackMessage updateAuditor(@RequestBody Task task) {
-        Long name = task.getProject();
-        Long auditor = task.getAuditor();
-        String auditorName = task.getAuditorName();
-        LambdaUpdateWrapper<Task> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(Task::getName, name)
-                .set(Task::getProjectName, auditorName)
-                .eq(Task::getProject, auditor);
+    public BackMessage updateAuditor(@RequestBody MamTask mamTask) {
+        Long name = mamTask.getProject();
+        Long auditor = mamTask.getAuditor();
+        String auditorName = mamTask.getAuditorName();
+        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(MamTask::getName, name)
+                .set(MamTask::getProjectName, auditorName)
+                .eq(MamTask::getProject, auditor);
         boolean ret = taskService.update(updateWrapper);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
@@ -209,10 +209,10 @@ public class TaskController {
     public BackMessage submitAudit(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.PADDING.getState())
-                    .eq(Task::getId, taskId)
-                    .and(i -> i.eq(Task::getStatus, TaskState.CATALOG.getState())
-                            .or().eq(Task::getStatus, TaskState.MODEIFY.getState()))
+                    .set(MamTask::getStatus, TaskState.PADDING.getState())
+                    .eq(MamTask::getId, taskId)
+                    .and(i -> i.eq(MamTask::getStatus, TaskState.CATALOG.getState())
+                            .or().eq(MamTask::getStatus, TaskState.MODEIFY.getState()))
                     .update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
@@ -232,9 +232,9 @@ public class TaskController {
     public BackMessage rebackCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.MODEIFY.getState())
-                    .eq(Task::getStatus, TaskState.PADDING.getState())
-                    .eq(Task::getId, taskId).update();
+                    .set(MamTask::getStatus, TaskState.MODEIFY.getState())
+                    .eq(MamTask::getStatus, TaskState.PADDING.getState())
+                    .eq(MamTask::getId, taskId).update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
             } else {
@@ -255,9 +255,9 @@ public class TaskController {
     public BackMessage passCatalog(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(Task::getStatus, TaskState.PADDING.getState())
-                    .eq(Task::getStatus, TaskState.FINISHED.getState())
-                    .eq(Task::getId, taskId).update();
+                    .set(MamTask::getStatus, TaskState.PADDING.getState())
+                    .eq(MamTask::getStatus, TaskState.FINISHED.getState())
+                    .eq(MamTask::getId, taskId).update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
             }
@@ -269,9 +269,9 @@ public class TaskController {
     @GetMapping("/query/name")
     public BackMessage queryByName(String name) {
         if (ObjectUtil.isNotEmpty(name)) {
-            LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(Task::getName, name);
-            Task target = taskService.getOne(queryWrapper);
+            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(MamTask::getName, name);
+            MamTask target = taskService.getOne(queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
             }
@@ -285,10 +285,10 @@ public class TaskController {
                                       @RequestParam(required = false, defaultValue = "1") Integer current,
                                       @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         if (ObjectUtil.isNotEmpty(projectId)) {
-            LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(Task::getProject, projectId)
-                    .orderByDesc(Task::getCreateTime);
-            Page<Task> target = taskService.page(new Page<Task>(current, pageSize), queryWrapper);
+            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(MamTask::getProject, projectId)
+                    .orderByDesc(MamTask::getCreateTime);
+            Page<MamTask> target = taskService.page(new Page<MamTask>(current, pageSize), queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
             } else {
@@ -303,7 +303,7 @@ public class TaskController {
     public BackMessage queryByAccount(String account, Integer projectId,
                                       @RequestParam(required = false, defaultValue = "1") Integer current,
                                       @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        Page<Task> page = taskService.queryByAccount(account, projectId, current, pageSize);
+        Page<MamTask> page = taskService.queryByAccount(account, projectId, current, pageSize);
         return new BackMessage(BackEnum.SUCCESS, page);
     }
 
@@ -311,9 +311,9 @@ public class TaskController {
     @GetMapping("/query/cataloger")
     public BackMessage queryByCataloger(Integer catalogerId) {
         if (ObjectUtil.isNotEmpty(catalogerId)) {
-            LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(Task::getCataloger, catalogerId);
-            Task target = taskService.getOne(queryWrapper);
+            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(MamTask::getCataloger, catalogerId);
+            MamTask target = taskService.getOne(queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
             }
@@ -325,9 +325,9 @@ public class TaskController {
     @GetMapping("/query/auditor")
     public BackMessage queryByAuditor(Integer auditorId) {
         if (ObjectUtil.isNotEmpty(auditorId)) {
-            LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(Task::getAuditor, auditorId);
-            Task target = taskService.getOne(queryWrapper);
+            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(MamTask::getAuditor, auditorId);
+            MamTask target = taskService.getOne(queryWrapper);
             if (target != null) {
                 return new BackMessage(BackEnum.SUCCESS, target);
             }
@@ -342,10 +342,10 @@ public class TaskController {
                                      @RequestParam(required = false, defaultValue = "1") Integer isAsc,
                                      @RequestParam(required = false, defaultValue = "0") Integer current,
                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        QueryWrapper<Task> queryWrapper = new QueryWrapper<Task>();
+        QueryWrapper<MamTask> queryWrapper = new QueryWrapper<MamTask>();
         queryWrapper.eq("status", TaskState.valueOf(status).getState())
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<Task> page = taskService.page(new Page<Task>(current, pageSize),
+        Page<MamTask> page = taskService.page(new Page<MamTask>(current, pageSize),
                 queryWrapper);
         return new BackMessage(BackEnum.SUCCESS, page);
     }

@@ -1,5 +1,6 @@
 package edu.cuz.mamv2;
 
+import cn.hutool.core.io.resource.ClassPathResource;
 import com.baidu.aip.speech.AipSpeech;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ import java.io.File;
 public class AipSpeechTest {
     private static final String videoPath = "D:/Code/Java/mamv2/src/test/java/edu/cuz/mamv2/assert/test.mp4";
     private static final String audioPath = "D:/Code/Java/mamv2/src/test/java/edu/cuz/mamv2/assert/test.wav";
-    
+
     public void getAudio() {
         File video = new File(videoPath);
         File target = new File(audioPath);
@@ -39,5 +40,11 @@ public class AipSpeechTest {
         } catch (EncoderException e) {
             log.info("提取失败：{}", e.getMessage());
         }
+    }
+
+    @Test
+    public void classPathTest() {
+        String path = AipSpeechTest.class.getResource("/").getPath();
+        System.out.println(path);
     }
 }

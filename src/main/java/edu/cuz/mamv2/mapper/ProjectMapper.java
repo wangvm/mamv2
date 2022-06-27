@@ -2,7 +2,7 @@ package edu.cuz.mamv2.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import edu.cuz.mamv2.entity.Project;
+import edu.cuz.mamv2.entity.MamProject;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
  * @author VM
  * @since 2022/01/17 10:56
  */
-public interface ProjectMapper extends BaseMapper<Project> {
+public interface ProjectMapper extends BaseMapper<MamProject> {
 
     /**
      * <p>
@@ -22,5 +22,5 @@ public interface ProjectMapper extends BaseMapper<Project> {
      * @param account
      * @return
      */
-    Page<Project> selectUserProjectsPage(Page<?> page, @Param("account") String account);
+    Page<MamProject> selectUserProjectsPage(Page<?> page, @Param("account") String account);
 }

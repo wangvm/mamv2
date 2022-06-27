@@ -15,7 +15,7 @@ import java.util.List;
 @Document(indexName = "scenes", createIndex = false)
 public class ScenesDTO {
     public ScenesDTO() {
-        menu = new MenuDTO();
+        menu = new Menu();
         title = new Attributes();
         description = new Attributes();
         subtitleForm = new Attributes();
@@ -31,7 +31,7 @@ public class ScenesDTO {
      * 菜单实体
      */
     @Field(store = true)
-    private MenuDTO menu;
+    private Menu menu;
     /**
      * 编目id
      */

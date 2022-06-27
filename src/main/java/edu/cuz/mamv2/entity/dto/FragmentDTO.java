@@ -16,7 +16,7 @@ import java.util.List;
 @Document(indexName = "fragment", createIndex = false)
 public class FragmentDTO {
     public FragmentDTO() {
-        menu = new MenuDTO();
+        menu = new Menu();
         title = new Attributes();
         description = new Attributes();
         creator = new Attributes();
@@ -36,7 +36,7 @@ public class FragmentDTO {
      * 菜单实体
      */
     @Field(store = true)
-    private MenuDTO menu;
+    private Menu menu;
     /**
      * 编目id
      */

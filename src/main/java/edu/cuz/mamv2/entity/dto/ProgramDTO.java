@@ -17,7 +17,7 @@ import java.util.List;
 @Document(indexName = "program", createIndex = false)
 public class ProgramDTO implements Serializable {
     public ProgramDTO() {
-        menu = new MenuDTO();
+        menu = new Menu();
         title = new Attributes();
         description = new Attributes();
         debutDate = new Attributes();
@@ -46,7 +46,7 @@ public class ProgramDTO implements Serializable {
      * 菜单实体
      */
     @Field(store = true)
-    private MenuDTO menu;
+    private Menu menu;
     /**
      * 编目id
      */

@@ -141,8 +141,8 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         for (SearchHit hit: hits) {
             String id = hit.getId();
             Map<String, Object> map = hit.getSourceAsMap();
-            MenuDTO menuDTO = JSONObject.parseObject(JSON.toJSONString(map.get("menu")), MenuDTO.class);
-            MenuVO menuVO = new MenuVO(id, menuDTO);
+            Menu menu = JSONObject.parseObject(JSON.toJSONString(map.get("menu")), Menu.class);
+            MenuVO menuVO = new MenuVO(id, menu);
             menus.add(menuVO);
         }
         return new BackMessage(BackEnum.SUCCESS, menus);

@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class TaskDTO {
-    private Task taskInfo;
+    private MamTask mamTaskInfo;
     private VideoDTO videoInfo;
 }

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import edu.cuz.mamv2.entity.User;
+import edu.cuz.mamv2.entity.MamUser;
 import edu.cuz.mamv2.entity.dto.ValidationList;
 import edu.cuz.mamv2.service.UserService;
 import edu.cuz.mamv2.utils.BackEnum;
@@ -39,15 +39,15 @@ public class UserController {
     private final RedisTemplate redisTemplate;
 
     @PostMapping("/add")
-    public BackMessage addUser(@RequestBody User user) {
+    public BackMessage addUser(@RequestBody MamUser mamUser) {
         // 对user数据预处理
-        user.setCreateTime(System.currentTimeMillis());
+        mamUser.setCreateTime(System.currentTimeMillis());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(mamUser.getPassword());
+        mamUser.setPassword(encodedPassword);
 
         // 保存到数据库
-        boolean ret = userService.save(user);
+        boolean ret = userService.save(mamUser);
         if (ret) {
             return new BackMessage().successWithMessage("注册成功");
         } else {
@@ -56,39 +56,39 @@ public class UserController {
     }
 
     @PostMapping("/addmany")
-    public BackMessage addManyUser(@RequestBody ValidationList<User> users) {
-        for (User user: users) {
+    public BackMessage addManyUser(@RequestBody ValidationList<MamUser> mamUsers) {
+        for (MamUser mamUser: mamUsers) {
             // 对user数据预处理
-            user.setCreateTime(System.currentTimeMillis());
+            mamUser.setCreateTime(System.currentTimeMillis());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
+            String encodedPassword = passwordEncoder.encode(mamUser.getPassword());
+            mamUser.setPassword(encodedPassword);
         }
-        userService.saveIgnoreBatch(users);
+        userService.saveIgnoreBatch(mamUsers);
         return new BackMessage(BackEnum.SUCCESS);
     }
 
     @PostMapping("/delete")
-    public BackMessage deleteUser(@RequestBody User user) {
-        String account = user.getAccount();
+    public BackMessage deleteUser(@RequestBody MamUser mamUser) {
+        String account = mamUser.getAccount();
         if (account == null) {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        QueryWrapper<MamUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", account);
         userService.remove(wrapper);
         return new BackMessage(BackEnum.SUCCESS);
     }
 
     @PostMapping("/update")
-    public BackMessage updateUserInfo(@RequestBody User user) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getAccount, user.getAccount());
-        boolean ret = userService.update(user, queryWrapper);
+    public BackMessage updateUserInfo(@RequestBody MamUser mamUser) {
+        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamUser::getAccount, mamUser.getAccount());
+        boolean ret = userService.update(mamUser, queryWrapper);
         // 重新加密密码，加盐值
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encryptPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encryptPassword);
+        String encryptPassword = passwordEncoder.encode(mamUser.getPassword());
+        mamUser.setPassword(encryptPassword);
         if (ret) {
             return new BackMessage(BackEnum.SUCCESS);
         } else {
@@ -97,10 +97,10 @@ public class UserController {
     }
 
     @PostMapping("/update/username")
-    public BackMessage updateUsername(@RequestBody User user) {
-        String username = user.getUsername();
-        String account = user.getAccount();
-        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+    public BackMessage updateUsername(@RequestBody MamUser mamUser) {
+        String username = mamUser.getUsername();
+        String account = mamUser.getAccount();
+        UpdateWrapper<MamUser> wrapper = new UpdateWrapper<>();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         wrapper.eq("account", account).set("username", username);
         boolean ret = userService.update(wrapper);
@@ -112,11 +112,11 @@ public class UserController {
     }
 
     @PostMapping("/update/password")
-    public BackMessage updatePassword(@RequestBody User user,
+    public BackMessage updatePassword(@RequestBody MamUser mamUser,
                                       String secretKeyId) {
         // 获取需要修改的信息
-        String account = user.getAccount();
-        String password = user.getPassword();
+        String account = mamUser.getAccount();
+        String password = mamUser.getPassword();
 
         if (ObjectUtil.isAllNotEmpty(account, password, secretKeyId)) {
             String secretKey = (String) redisTemplate.boundValueOps(secretKeyId).get();
@@ -124,8 +124,8 @@ public class UserController {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String encryptPassword = passwordEncoder.encode(decryptPasswod);
             boolean ret = userService.lambdaUpdate()
-                    .eq(User::getAccount, account)
-                    .set(User::getPassword, encryptPassword)
+                    .eq(MamUser::getAccount, account)
+                    .set(MamUser::getPassword, encryptPassword)
                     .update();
             if (ret) {
                 return new BackMessage(BackEnum.SUCCESS);
@@ -144,44 +144,44 @@ public class UserController {
      */
     @GetMapping("/query/account")
     public BackMessage queryUserByAccount(String account) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getAccount, account)
-                .select(User::getAccount, User::getUsername, User::getCreateTime);
-        User user = userService.getOne(queryWrapper);
-        if (user == null) {
+        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamUser::getAccount, account)
+                .select(MamUser::getAccount, MamUser::getUsername, MamUser::getCreateTime);
+        MamUser mamUser = userService.getOne(queryWrapper);
+        if (mamUser == null) {
             return new BackMessage(BackEnum.DATA_ERROR);
         }
-        return new BackMessage(BackEnum.SUCCESS, user);
+        return new BackMessage(BackEnum.SUCCESS, mamUser);
     }
 
     @GetMapping("/query/name")
     public BackMessage queryUserByName(@RequestParam String username,
                                        @RequestParam(required = false, defaultValue = "0") Integer current,
                                        @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(User::getUsername, username);
-        Page<User> userList = userService.page(new Page<User>(current, pageSize), queryWrapper);
+        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(MamUser::getUsername, username);
+        Page<MamUser> userList = userService.page(new Page<MamUser>(current, pageSize), queryWrapper);
         return new BackMessage(BackEnum.SUCCESS, userList);
     }
 
     @GetMapping("/query/cataloger")
     public BackMessage queryCatalogerByName(String username) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getRole, "ROLE_CATALOGER")
-                .like(User::getUsername, username)
-                .select(User::getAccount, User::getUsername);
-        List<User> userList = userService.list(queryWrapper);
-        return new BackMessage(BackEnum.SUCCESS, userList);
+        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamUser::getRole, "ROLE_CATALOGER")
+                .like(MamUser::getUsername, username)
+                .select(MamUser::getAccount, MamUser::getUsername);
+        List<MamUser> mamUserList = userService.list(queryWrapper);
+        return new BackMessage(BackEnum.SUCCESS, mamUserList);
     }
 
     @GetMapping("/query/auditor")
     public BackMessage queryAuditorByName(String username) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getRole, "ROLE_AUDITOR")
-                .like(User::getUsername, username)
-                .select(User::getAccount, User::getUsername);
-        List<User> userList = userService.list(queryWrapper);
-        return new BackMessage(BackEnum.SUCCESS, userList);
+        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamUser::getRole, "ROLE_AUDITOR")
+                .like(MamUser::getUsername, username)
+                .select(MamUser::getAccount, MamUser::getUsername);
+        List<MamUser> mamUserList = userService.list(queryWrapper);
+        return new BackMessage(BackEnum.SUCCESS, mamUserList);
     }
 
     /**
@@ -199,7 +199,7 @@ public class UserController {
                                      @RequestParam(required = false, defaultValue = "1") Integer isAsc,
                                      @RequestParam(required = false, defaultValue = "0") Integer current,
                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        Page<User> users = userService.queryUserList(status, order, isAsc, current, pageSize);
+        Page<MamUser> users = userService.queryUserList(status, order, isAsc, current, pageSize);
         return new BackMessage(BackEnum.SUCCESS, users);
     }
 }

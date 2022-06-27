@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @description 编目数据菜单
  */
 @Data
-public class MenuDTO implements Serializable {
+public class Menu implements Serializable {
     /**
      * 菜单id
      */

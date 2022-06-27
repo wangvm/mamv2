@@ -14,5 +14,5 @@ public class MenuVO {
      * 编目数据id
      */
     private String catalogId;
-    private MenuDTO menu;
+    private Menu menu;
 }

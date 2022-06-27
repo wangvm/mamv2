@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("mam_task")
-public class Task implements Serializable {
+public class MamTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,9 +77,4 @@ public class Task implements Serializable {
      * 视频信息id
      */
     private String videoInfoId;
-
-    /**
-     * 逻辑删除控制位
-     */
-    private Integer deleted;
 }

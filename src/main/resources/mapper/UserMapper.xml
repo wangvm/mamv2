@@ -4,7 +4,7 @@
 
     <insert id="saveIgnoreUser">
         insert into mam.mam_user (account, username, password, createTime)
-        VALUES (#{user.account}, #{user.username}, #{user.password}, #{user.createTime})
+        VALUES (#{mamUser.account}, #{mamUser.username}, #{mamUser.password}, #{mamUser.createTime})
         ON DUPLICATE KEY UPDATE account=account
     </insert>
 </mapper>

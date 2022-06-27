@@ -2,7 +2,7 @@ package edu.cuz.mamv2.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
-import edu.cuz.mamv2.entity.Task;
+import edu.cuz.mamv2.entity.MamTask;
 import edu.cuz.mamv2.entity.dto.VideoDTO;
 import edu.cuz.mamv2.extension.VideoExtenison;
 import edu.cuz.mamv2.mapper.TaskMapper;
@@ -112,8 +112,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public BackMessage getVideoInfo(String taskId) {
-        Task task = taskMapper.selectById(taskId);
-        String videoInfoId = task.getVideoInfoId();
+        MamTask mamTask = taskMapper.selectById(taskId);
+        String videoInfoId = mamTask.getVideoInfoId();
         Optional<VideoDTO> videoDTO = videoRepository.findById(videoInfoId);
         if (!videoDTO.isPresent()) {
             return new BackMessage(BackEnum.DATA_ERROR);

@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("mam_project")
-public class Project implements Serializable {
+public class MamProject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,9 +58,4 @@ public class Project implements Serializable {
      * 已完成任务数量
      */
     private Integer finishedTask;
-
-    /**
-     * 逻辑删除控制位
-     */
-    private Integer deleted;
 }
