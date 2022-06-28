@@ -12,7 +12,7 @@
                finishedTask
         from mam.mam_project
         where id in (
-            select mamProject
+            select project
             from mam.mam_task
             where deleted = 0
               and (cataloger = #{account}

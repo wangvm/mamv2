@@ -16,7 +16,7 @@ server:
         max-age: 120m
 spring:
   profiles:
-    active: prod
+    active: dev
     include: self
   servlet:
     multipart:

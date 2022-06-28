@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     name: defaultDataSource
     password: wajing
-    url: jdbc:mysql://192.168.111.128:3306/mam?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/mam?serverTimezone=UTC
     username: root
   redis:
     host: 192.168.111.128
@@ -21,7 +21,6 @@ spring:
       uris: 192.168.111.128:9200
       password: wajing
       username: elastic
-
 mybatis-plus:
   configuration:
     # 控制打印sql

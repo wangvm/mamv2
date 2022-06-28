@@ -154,7 +154,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         if (save == null) {
             return new BackMessage().failureWithMessage("更新失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return new BackMessage().successWithMessage("更新成功");
     }
 
     @Override
@@ -163,7 +163,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         if (save == null) {
             return new BackMessage().failureWithMessage("更新失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return new BackMessage().successWithMessage("更新成功");
     }
 
     @Override
@@ -172,7 +172,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
         if (save == null) {
             return new BackMessage().failureWithMessage("更新失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return new BackMessage().successWithMessage("更新成功");
     }
 
     @Override

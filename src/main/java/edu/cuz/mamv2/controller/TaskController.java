@@ -49,7 +49,7 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
-        MamTask mamTask = taskDTO.getMamTaskInfo();
+        MamTask mamTask = taskDTO.getTaskInfo();
         VideoDTO videoInfo = taskDTO.getVideoInfo();
         mamTask.setCreateTime(System.currentTimeMillis());
         mamTask.setVideoInfoId(videoInfo.getId());
@@ -215,7 +215,7 @@ public class TaskController {
                             .or().eq(MamTask::getStatus, TaskState.MODEIFY.getState()))
                     .update();
             if (ret) {
-                return new BackMessage(BackEnum.SUCCESS);
+                return new BackMessage().successWithMessage("提交审核成功");
             }
         }
         return new BackMessage(BackEnum.BAD_REQUEST);
@@ -259,7 +259,7 @@ public class TaskController {
                     .eq(MamTask::getStatus, TaskState.FINISHED.getState())
                     .eq(MamTask::getId, taskId).update();
             if (ret) {
-                return new BackMessage(BackEnum.SUCCESS);
+                return new BackMessage().successWithMessage("审核通过");
             }
         }
         return new BackMessage(BackEnum.BAD_REQUEST);
