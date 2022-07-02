@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.cuz.mamv2.entity.MamUser;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.service.UserService;
-import edu.cuz.mamv2.utils.BackEnum;
-import edu.cuz.mamv2.utils.CustomException;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -66,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, MamUser> implements
         queryWrapper.eq(MamUser::getAccount, username);
         MamUser mamUser = userMapper.selectOne(queryWrapper);
         if (mamUser == null) {
-            throw new BadCredentialsException(BackEnum.LOGIN_FAILED.getMessage());
+            throw new BadCredentialsException("账户或密码错误");
         }
         // 获取用户权限，并将其添加到GrantedAuthority中
         ArrayList<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();

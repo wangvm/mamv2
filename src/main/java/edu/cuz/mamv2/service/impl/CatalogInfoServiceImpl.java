@@ -7,8 +7,7 @@ import edu.cuz.mamv2.repository.FragmentRepository;
 import edu.cuz.mamv2.repository.ProgramRepository;
 import edu.cuz.mamv2.repository.ScenesRepository;
 import edu.cuz.mamv2.service.CatalogInfoService;
-import edu.cuz.mamv2.utils.BackEnum;
-import edu.cuz.mamv2.utils.BackMessage;
+import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -49,38 +48,38 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
 
 
     @Override
-    public BackMessage addProgramRecord(ProgramDTO program) {
+    public R addProgramRecord(ProgramDTO program) {
         Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
         if (b.isPresent()) {
-            return new BackMessage().failureWithMessage("任务已存在");
+            return R.error("任务已存在");
         }
         ProgramDTO save = programRepository.save(program);
         if (save == null) {
-            return new BackMessage().failureWithMessage("添加失败，请重试");
+            return R.error("添加失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return R.success();
     }
 
     @Override
-    public BackMessage addFragmentRecord(FragmentDTO fragment) {
+    public R addFragmentRecord(FragmentDTO fragment) {
         FragmentDTO save = fragmentRepository.save(fragment);
         if (save == null) {
-            return new BackMessage().failureWithMessage("添加失败，请重试");
+            return R.error("添加失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS, save);
+        return R.success(save);
     }
 
     @Override
-    public BackMessage addScenesRecord(ScenesDTO scenese) {
+    public R addScenesRecord(ScenesDTO scenese) {
         ScenesDTO save = scenesRepository.save(scenese);
         if (save == null) {
-            return new BackMessage().failureWithMessage("添加失败，请重试");
+            return R.error("添加失败，请重试");
         }
-        return new BackMessage(BackEnum.SUCCESS, save);
+        return R.success(save);
     }
 
     @Override
-    public BackMessage deleteCatalogRecord(String catalogId, String record) {
+    public R deleteCatalogRecord(String catalogId, String record) {
         switch (record) {
             case "fragment":
                 fragmentRepository.deleteById(catalogId);
@@ -89,35 +88,35 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
                 scenesRepository.deleteById(catalogId);
                 break;
             default:
-                return new BackMessage().failureWithMessage("删除类型不存在");
+                return R.error("删除类型不存在");
         }
-        return new BackMessage(BackEnum.SUCCESS);
+        return R.success();
     }
 
     @Override
-    public BackMessage getCatalogRecord(String record, String catalogId) {
+    public R getCatalogRecord(String record, String catalogId) {
         switch (record) {
             case "fragment":
                 Optional<FragmentDTO> fragment = fragmentRepository.findById(catalogId);
                 if (fragment.isPresent()) {
-                    return new BackMessage(BackEnum.SUCCESS, fragment);
+                    return R.success(fragment);
                 } else {
-                    return new BackMessage().failureWithMessage("数据不存在");
+                    return R.error("数据不存在");
                 }
             case "scenes":
                 Optional<ScenesDTO> scenes = scenesRepository.findById(catalogId);
                 if (scenes.isPresent()) {
-                    return new BackMessage(BackEnum.SUCCESS, scenes);
+                    return R.success(scenes);
                 } else {
-                    return new BackMessage().failureWithMessage("数据不存在");
+                    return R.error("数据不存在");
                 }
             default:
-                return new BackMessage().failureWithMessage("类型不存在");
+                return R.error("类型不存在");
         }
     }
 
     @Override
-    public BackMessage getMenu(Integer taskId) {
+    public R getMenu(Integer taskId) {
         // 构建搜索条件
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.fetchSource(new String[]{"id", "menu"}, null)
@@ -131,7 +130,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
-            return new BackMessage().failureWithMessage("查询失败请重试");
+            return R.error("查询失败请重试");
         }
         log.info("检索任务id：{}，检索文档总数：{}，最大得分：{}", taskId,
                 response.getHits().getTotalHits(),
@@ -145,38 +144,38 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             MenuVO menuVO = new MenuVO(id, menu);
             menus.add(menuVO);
         }
-        return new BackMessage(BackEnum.SUCCESS, menus);
+        return R.success(menus);
     }
 
     @Override
-    public BackMessage updateProgramRecord(ProgramDTO program) {
+    public R updateProgramRecord(ProgramDTO program) {
         ProgramDTO save = programRepository.save(program);
         if (save == null) {
-            return new BackMessage().failureWithMessage("更新失败，请重试");
+            return R.error("更新失败，请重试");
         }
-        return new BackMessage().successWithMessage("更新成功");
+        return R.success("更新成功");
     }
 
     @Override
-    public BackMessage updateFragmentRecord(FragmentDTO fragment) {
+    public R updateFragmentRecord(FragmentDTO fragment) {
         FragmentDTO save = fragmentRepository.save(fragment);
         if (save == null) {
-            return new BackMessage().failureWithMessage("更新失败，请重试");
+            return R.error("更新失败，请重试");
         }
-        return new BackMessage().successWithMessage("更新成功");
+        return R.success("更新成功");
     }
 
     @Override
-    public BackMessage updateScenesRecord(ScenesDTO scenese) {
+    public R updateScenesRecord(ScenesDTO scenese) {
         ScenesDTO save = scenesRepository.save(scenese);
         if (save == null) {
-            return new BackMessage().failureWithMessage("更新失败，请重试");
+            return R.error("更新失败，请重试");
         }
-        return new BackMessage().successWithMessage("更新成功");
+        return R.success();
     }
 
     @Override
-    public BackMessage deleteBulkScenes(List<String> scenesList) {
+    public R deleteBulkScenes(List<String> scenesList) {
         DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest("scenes");
         deleteByQueryRequest.setConflicts("proceed");
         deleteByQueryRequest.setQuery(QueryBuilders.termsQuery("_id", scenesList));
@@ -185,16 +184,13 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             response = restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.info("批量删除场景层数据失败,message:{}", e.getMessage());
-            return new BackMessage(BackEnum.IO_ERROR);
+            return R.error(e.getMessage());
         }
-        return new BackMessage(BackEnum.SUCCESS, response);
+        return R.success(response);
     }
 
     @Override
-    public BackMessage getProgramRecord(String catalogId, Long taskId) {
-        if (catalogId == null && taskId == null) {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+    public R getProgramRecord(String catalogId, Long taskId) {
         Optional<ProgramDTO> program;
         if (catalogId == null) {
             program = programRepository.findByTaskId(taskId);
@@ -202,9 +198,9 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             program = programRepository.findById(catalogId);
         }
         if (program.isPresent()) {
-            return new BackMessage(BackEnum.SUCCESS, program);
+            return R.success(program);
         } else {
-            return new BackMessage().failureWithMessage("数据不存在");
+            return R.error("数据不存在");
         }
     }
 }

@@ -12,8 +12,7 @@ import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.enums.TaskState;
 import edu.cuz.mamv2.repository.ProgramRepository;
 import edu.cuz.mamv2.service.TaskService;
-import edu.cuz.mamv2.utils.BackEnum;
-import edu.cuz.mamv2.utils.BackMessage;
+import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -48,7 +47,7 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
-    public BackMessage addTask(@RequestBody TaskDTO taskDTO) {
+    public R addTask(@RequestBody TaskDTO taskDTO) {
         MamTask mamTask = taskDTO.getTaskInfo();
         VideoDTO videoInfo = taskDTO.getVideoInfo();
         mamTask.setCreateTime(System.currentTimeMillis());
@@ -72,36 +71,29 @@ public class TaskController {
         log.info(program.toString());
         Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
         if (b.isPresent()) {
-            return new BackMessage().failureWithMessage("任务已存在");
+            return R.error("任务已存在");
         }
         ProgramDTO save = programRepository.save(program);
         if (save == null) {
-            return new BackMessage().failureWithMessage("添加失败，请重试");
+            return R.error("添加失败，请重试");
         }
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success("添加任务成功");
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addMany")
-    public BackMessage addManyTask(@RequestBody ValidationList<MamTask> mamTasks) {
+    public R addManyTask(@RequestBody ValidationList<MamTask> mamTasks) {
         for (MamTask mamTask: mamTasks) {
             mamTask.setCreateTime(System.currentTimeMillis());
         }
         boolean ret = taskService.saveBatch(mamTasks);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
-    public BackMessage deleteTask(@RequestBody MamTask mamTask) {
+    public R deleteTask(@RequestBody MamTask mamTask) {
         Long id = mamTask.getId();
         boolean ret = taskService.removeById(id);
         DeleteByQueryRequest request = new DeleteByQueryRequest("program", "fragment", "scenes");
@@ -111,32 +103,24 @@ public class TaskController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
-    public BackMessage updateName(@RequestBody MamTask mamTask) {
+    public R updateName(@RequestBody MamTask mamTask) {
         String name = mamTask.getName();
         Long id = mamTask.getId();
         LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(MamTask::getName, name)
                 .eq(MamTask::getId, id);
         boolean ret = taskService.update(updateWrapper);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     @Deprecated
     @PostMapping("/update/project")
-    public BackMessage updateProject(@RequestBody MamTask mamTask) {
+    public R updateProject(@RequestBody MamTask mamTask) {
         Long name = mamTask.getProject();
         Long projectId = mamTask.getProject();
         String projectName = mamTask.getProjectName();
@@ -145,27 +129,19 @@ public class TaskController {
                 .set(MamTask::getProjectName, projectName)
                 .eq(MamTask::getProject, projectId);
         boolean ret = taskService.update(updateWrapper);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
-    public BackMessage updateTaskInfo(@RequestBody MamTask mamTask) {
+    public R updateTaskInfo(@RequestBody MamTask mamTask) {
         boolean ret = taskService.updateById(mamTask);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.DATA_ERROR);
-        }
+        return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/cataloger")
-    public BackMessage updateCataloger(@RequestBody MamTask mamTask) {
+    public R updateCataloger(@RequestBody MamTask mamTask) {
         Long name = mamTask.getProject();
         Long cataloger = mamTask.getCataloger();
         String catalogerName = mamTask.getCatalogerName();
@@ -174,16 +150,12 @@ public class TaskController {
                 .set(MamTask::getProjectName, catalogerName)
                 .eq(MamTask::getProject, cataloger);
         boolean ret = taskService.update(updateWrapper);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/auditor")
-    public BackMessage updateAuditor(@RequestBody MamTask mamTask) {
+    public R updateAuditor(@RequestBody MamTask mamTask) {
         Long name = mamTask.getProject();
         Long auditor = mamTask.getAuditor();
         String auditorName = mamTask.getAuditorName();
@@ -192,21 +164,17 @@ public class TaskController {
                 .set(MamTask::getProjectName, auditorName)
                 .eq(MamTask::getProject, auditor);
         boolean ret = taskService.update(updateWrapper);
-        if (ret) {
-            return new BackMessage(BackEnum.SUCCESS);
-        } else {
-            return new BackMessage(BackEnum.BAD_REQUEST);
-        }
+        return R.success();
     }
 
     /**
      * 提交审核  编目中、待修改->审核中
      * @param taskId 任务id
-     * @return {@link BackMessage}
+     * @return {@link R}
      */
     @PreAuthorize("hasRole('CATALOGER')")
     @GetMapping("/submit")
-    public BackMessage submitAudit(Integer taskId) {
+    public R submitAudit(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
                     .set(MamTask::getStatus, TaskState.PADDING.getState())
@@ -215,139 +183,105 @@ public class TaskController {
                             .or().eq(MamTask::getStatus, TaskState.MODEIFY.getState()))
                     .update();
             if (ret) {
-                return new BackMessage().successWithMessage("提交审核成功");
+                return R.success("提交审核成功");
             }
         }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+        return R.error("参数错误");
     }
 
 
     /**
      * 打回编目  审核中->待修改
      * @param taskId 任务id
-     * @return {@link BackMessage}
+     * @return {@link R}
      */
     @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/reback")
-    public BackMessage rebackCatalog(Integer taskId) {
-        if (ObjectUtil.isNotNull(taskId)) {
-            boolean ret = taskService.lambdaUpdate()
-                    .set(MamTask::getStatus, TaskState.MODEIFY.getState())
-                    .eq(MamTask::getStatus, TaskState.PADDING.getState())
-                    .eq(MamTask::getId, taskId).update();
-            if (ret) {
-                return new BackMessage(BackEnum.SUCCESS);
-            } else {
-                return new BackMessage(BackEnum.DATA_ERROR);
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R rebackCatalog(Integer taskId) {
+        boolean ret = taskService.lambdaUpdate()
+                .set(MamTask::getStatus, TaskState.MODEIFY.getState())
+                .eq(MamTask::getStatus, TaskState.PADDING.getState())
+                .eq(MamTask::getId, taskId).update();
+        return R.success();
     }
 
 
     /**
      * 通过编目  审核中->完成
      * @param taskId 任务id
-     * @return {@link BackMessage}
+     * @return {@link R}
      */
     @PreAuthorize("hasRole('AUDITOR')")
     @GetMapping("/pass")
-    public BackMessage passCatalog(Integer taskId) {
-        if (ObjectUtil.isNotNull(taskId)) {
-            boolean ret = taskService.lambdaUpdate()
-                    .set(MamTask::getStatus, TaskState.PADDING.getState())
-                    .eq(MamTask::getStatus, TaskState.FINISHED.getState())
-                    .eq(MamTask::getId, taskId).update();
-            if (ret) {
-                return new BackMessage().successWithMessage("审核通过");
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R passCatalog(Integer taskId) {
+        boolean ret = taskService.lambdaUpdate()
+                .set(MamTask::getStatus, TaskState.PADDING.getState())
+                .eq(MamTask::getStatus, TaskState.FINISHED.getState())
+                .eq(MamTask::getId, taskId).update();
+        return R.success("审核通过");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/name")
-    public BackMessage queryByName(String name) {
-        if (ObjectUtil.isNotEmpty(name)) {
-            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(MamTask::getName, name);
-            MamTask target = taskService.getOne(queryWrapper);
-            if (target != null) {
-                return new BackMessage(BackEnum.SUCCESS, target);
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R queryByName(String name) {
+        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamTask::getName, name);
+        MamTask target = taskService.getOne(queryWrapper);
+        return R.success(target);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/project")
-    public BackMessage queryByProject(@RequestParam(required = true) Integer projectId,
-                                      @RequestParam(required = false, defaultValue = "1") Integer current,
-                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        if (ObjectUtil.isNotEmpty(projectId)) {
-            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(MamTask::getProject, projectId)
-                    .orderByDesc(MamTask::getCreateTime);
-            Page<MamTask> target = taskService.page(new Page<MamTask>(current, pageSize), queryWrapper);
-            if (target != null) {
-                return new BackMessage(BackEnum.SUCCESS, target);
-            } else {
-                return new BackMessage(200, "项目暂无任务");
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R queryByProject(@RequestParam(required = true) Integer projectId,
+                            @RequestParam(required = false, defaultValue = "1") Integer current,
+                            @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamTask::getProject, projectId)
+                .orderByDesc(MamTask::getCreateTime);
+        Page<MamTask> target = taskService.page(new Page<MamTask>(current, pageSize), queryWrapper);
+        return R.success(target);
     }
 
     @PreAuthorize("hasAnyRole('CATALOGER','AUDITOR')")
     @GetMapping("/query/user")
-    public BackMessage queryByAccount(String account, Integer projectId,
-                                      @RequestParam(required = false, defaultValue = "1") Integer current,
-                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+    public R queryByAccount(String account, Integer projectId,
+                            @RequestParam(required = false, defaultValue = "1") Integer current,
+                            @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         Page<MamTask> page = taskService.queryByAccount(account, projectId, current, pageSize);
-        return new BackMessage(BackEnum.SUCCESS, page);
+        return R.success(page);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/cataloger")
-    public BackMessage queryByCataloger(Integer catalogerId) {
-        if (ObjectUtil.isNotEmpty(catalogerId)) {
-            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(MamTask::getCataloger, catalogerId);
-            MamTask target = taskService.getOne(queryWrapper);
-            if (target != null) {
-                return new BackMessage(BackEnum.SUCCESS, target);
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R queryByCataloger(Integer catalogerId) {
+        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamTask::getCataloger, catalogerId);
+        MamTask target = taskService.getOne(queryWrapper);
+        return R.success(target);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/auditor")
-    public BackMessage queryByAuditor(Integer auditorId) {
-        if (ObjectUtil.isNotEmpty(auditorId)) {
-            LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(MamTask::getAuditor, auditorId);
-            MamTask target = taskService.getOne(queryWrapper);
-            if (target != null) {
-                return new BackMessage(BackEnum.SUCCESS, target);
-            }
-        }
-        return new BackMessage(BackEnum.BAD_REQUEST);
+    public R queryByAuditor(Integer auditorId) {
+        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MamTask::getAuditor, auditorId);
+        MamTask target = taskService.getOne(queryWrapper);
+        return R.success(target);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/status")
-    public BackMessage queryTaskList(@RequestParam(required = false, defaultValue = "编目中") String status,
-                                     @RequestParam(required = false, defaultValue = "account") String order,
-                                     @RequestParam(required = false, defaultValue = "1") Integer isAsc,
-                                     @RequestParam(required = false, defaultValue = "0") Integer current,
-                                     @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+    public R queryTaskList(@RequestParam(required = false, defaultValue = "编目中") String status,
+                           @RequestParam(required = false, defaultValue = "account") String order,
+                           @RequestParam(required = false, defaultValue = "1") Integer isAsc,
+                           @RequestParam(required = false, defaultValue = "0") Integer current,
+                           @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         QueryWrapper<MamTask> queryWrapper = new QueryWrapper<MamTask>();
         queryWrapper.eq("status", TaskState.valueOf(status).getState())
                 .orderBy(true, isAsc > 0 ? true : false, order);
         Page<MamTask> page = taskService.page(new Page<MamTask>(current, pageSize),
                 queryWrapper);
-        return new BackMessage(BackEnum.SUCCESS, page);
+        return R.success(page);
     }
 }
 

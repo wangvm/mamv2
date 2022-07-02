@@ -5,7 +5,7 @@ import edu.cuz.mamv2.entity.dto.FragmentDTO;
 import edu.cuz.mamv2.entity.dto.ProgramDTO;
 import edu.cuz.mamv2.entity.dto.ScenesDTO;
 import edu.cuz.mamv2.service.CatalogInfoService;
-import edu.cuz.mamv2.utils.BackMessage;
+import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,84 +30,84 @@ public class CatalogInfoController {
     // 添加编目记录
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/program")
-    public BackMessage addProgramRecord(@RequestBody ProgramDTO program) {
-        BackMessage backMessage = catalogInfoService.addProgramRecord(program);
+    public R addProgramRecord(@RequestBody ProgramDTO program) {
+        R backMessage = catalogInfoService.addProgramRecord(program);
         return backMessage;
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/fragment")
-    public BackMessage addFragmentRecord(@RequestBody FragmentDTO fragment) {
-        BackMessage backMessage = catalogInfoService.addFragmentRecord(fragment);
+    public R addFragmentRecord(@RequestBody FragmentDTO fragment) {
+        R backMessage = catalogInfoService.addFragmentRecord(fragment);
         return backMessage;
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/scenes")
-    public BackMessage addScenesRecord(@RequestBody ScenesDTO scenese) {
-        BackMessage backMessage = catalogInfoService.addScenesRecord(scenese);
+    public R addScenesRecord(@RequestBody ScenesDTO scenese) {
+        R backMessage = catalogInfoService.addScenesRecord(scenese);
         return backMessage;
     }
 
     // 删除编目记录
     @PreAuthorize("hasRole('CATALOGER')")
     @GetMapping("/delete/{record}")
-    public BackMessage deleteCatalogRecord(@PathVariable("record") String record,
-                                           @RequestParam String catalogId) {
-        BackMessage backMessage = catalogInfoService.deleteCatalogRecord(catalogId, record);
+    public R deleteCatalogRecord(@PathVariable("record") String record,
+                                 @RequestParam String catalogId) {
+        R backMessage = catalogInfoService.deleteCatalogRecord(catalogId, record);
         return backMessage;
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/delete/bulk/scenes")
-    public BackMessage deleteBulkScenes(@RequestBody List<String> scenesList) {
-        BackMessage backMessage = catalogInfoService.deleteBulkScenes(scenesList);
+    public R deleteBulkScenes(@RequestBody List<String> scenesList) {
+        R backMessage = catalogInfoService.deleteBulkScenes(scenesList);
         return backMessage;
     }
 
     // 获取具体记录
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/get/{record}")
-    public BackMessage getCatalogRecord(@PathVariable("record") String record,
-                                        @RequestParam String catalogId) {
-        BackMessage backMessage = catalogInfoService.getCatalogRecord(record, catalogId);
+    public R getCatalogRecord(@PathVariable("record") String record,
+                              @RequestParam String catalogId) {
+        R backMessage = catalogInfoService.getCatalogRecord(record, catalogId);
         return backMessage;
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/get/program")
-    public BackMessage getProgramRecord(@RequestParam(required = false) String catalogId,
-                                        @RequestParam(required = false) Long taskId) {
-        BackMessage backMessage = catalogInfoService.getProgramRecord(catalogId, taskId);
+    public R getProgramRecord(@RequestParam(required = false) String catalogId,
+                              @RequestParam(required = false) Long taskId) {
+        R backMessage = catalogInfoService.getProgramRecord(catalogId, taskId);
         return backMessage;
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/get/menu")
-    public BackMessage getMenu(Integer taskId) {
-        BackMessage backMessage = catalogInfoService.getMenu(taskId);
+    public R getMenu(Integer taskId) {
+        R backMessage = catalogInfoService.getMenu(taskId);
         return backMessage;
     }
 
     // 更新具体的记录
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/program")
-    public BackMessage updateProgramRecord(@RequestBody ProgramDTO program) {
-        BackMessage backMessage = catalogInfoService.updateProgramRecord(program);
+    public R updateProgramRecord(@RequestBody ProgramDTO program) {
+        R backMessage = catalogInfoService.updateProgramRecord(program);
         return backMessage;
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/fragment")
-    public BackMessage updateFragmentRecord(@RequestBody FragmentDTO fragment) {
-        BackMessage backMessage = catalogInfoService.updateFragmentRecord(fragment);
+    public R updateFragmentRecord(@RequestBody FragmentDTO fragment) {
+        R backMessage = catalogInfoService.updateFragmentRecord(fragment);
         return backMessage;
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/scenes")
-    public BackMessage updateScenesRecord(@RequestBody ScenesDTO scenese) {
-        BackMessage backMessage = catalogInfoService.updateScenesRecord(scenese);
+    public R updateScenesRecord(@RequestBody ScenesDTO scenese) {
+        R backMessage = catalogInfoService.updateScenesRecord(scenese);
         return backMessage;
     }
 }

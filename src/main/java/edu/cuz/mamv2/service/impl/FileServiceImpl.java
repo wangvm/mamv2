@@ -8,9 +8,9 @@ import edu.cuz.mamv2.extension.VideoExtenison;
 import edu.cuz.mamv2.mapper.TaskMapper;
 import edu.cuz.mamv2.repository.VideoRepository;
 import edu.cuz.mamv2.service.FileService;
-import edu.cuz.mamv2.utils.BackEnum;
-import edu.cuz.mamv2.utils.BackMessage;
 import edu.cuz.mamv2.utils.CustomException;
+import edu.cuz.mamv2.utils.HttpStatus;
+import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -62,13 +62,13 @@ public class FileServiceImpl implements FileService {
     private TaskMapper taskMapper;
 
     @Override
-    public BackMessage uploadVideo(MultipartFile uploadVideo) {
+    public R uploadVideo(MultipartFile uploadVideo) {
         if (CONTENTTYPE.equals(uploadVideo.getContentType())) {
             // 视频源文件名
             String originalFilename = uploadVideo.getOriginalFilename();
             VideoDTO dto = videoRepository.findByFileName(originalFilename);
             if (dto != null) {
-                return new BackMessage(BackEnum.DATA_ERROR.getCode(), "视频已存在");
+                return R.error("视频已存在");
             }
             // 视频随机名称路径
             String destination = getFilename(videoStoredPath);
@@ -80,20 +80,20 @@ public class FileServiceImpl implements FileService {
                 target.setReadable(true, false);
             } catch (IOException e) {
                 log.info("文件保存失败：{}", e.getMessage());
-                return new BackMessage().failureWithMessage("上传失败请重试");
+                return R.error("上传失败请重试");
             }
             // 提取视频元信息并保存到es中
             String videoInfoId = extractVideoInformation(target, originalFilename);
             // 对视频的扩展操作，计划实现异步执行提取音频并上传到云服务器提取音频文字
             videoExtenison.handleVideo(videoInfoId, target);
-            return new BackMessage().successWithMessage("上传文件成功");
+            return R.success("上传文件成功");
         } else {
-            return new BackMessage().failureWithMessage("格式错误");
+            return R.error("格式错误");
         }
     }
 
     @Override
-    public BackMessage keyFrameCut(Long cutTime, String videoUrl) {
+    public R keyFrameCut(Long cutTime, String videoUrl) {
         String videName = videoUrl.substring(videoUrl.length() - 36);
         File video = new File(videoStoredPath + videName);
         MultimediaObject multimediaObject = new MultimediaObject(video);
@@ -105,31 +105,31 @@ public class FileServiceImpl implements FileService {
             target.setReadable(true, false);
         } catch (EncoderException e) {
             log.info("截图失败：{}", e.getMessage());
-            return new BackMessage(BackEnum.DATA_ERROR.getCode(), "截图失败，请确保视频没有错误");
+            return R.error("截图失败");
         }
-        return new BackMessage(BackEnum.SUCCESS, serverpath + "resource/images/" + filename.substring(filename.length() - 36));
+        return R.success(serverpath + "resource/images/" + filename.substring(filename.length() - 36));
     }
 
     @Override
-    public BackMessage getVideoInfo(String taskId) {
+    public R getVideoInfo(String taskId) {
         MamTask mamTask = taskMapper.selectById(taskId);
         String videoInfoId = mamTask.getVideoInfoId();
         Optional<VideoDTO> videoDTO = videoRepository.findById(videoInfoId);
         if (!videoDTO.isPresent()) {
-            return new BackMessage(BackEnum.DATA_ERROR);
+            return R.error("视频不存在");
         }
-        return new BackMessage(BackEnum.SUCCESS, videoDTO);
+        return R.success(videoDTO);
     }
 
     @Override
-    public BackMessage getVideoList(Integer pageSize, Integer pageIndex) {
+    public R getVideoList(Integer pageSize, Integer pageIndex) {
         // 从es中查询视频列表
         Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
-        return new BackMessage(BackEnum.SUCCESS, page);
+        return R.success(page);
     }
 
     @Override
-    public BackMessage searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
+    public R searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
         // 通过es的match查询关键词返回结果，默认返回5条
         // 构造查询条件
         SearchSourceBuilder builder = new SearchSourceBuilder();
@@ -138,8 +138,8 @@ public class FileServiceImpl implements FileService {
                 .analyzer("ik_smart")
                 .operator(Operator.OR));
         builder.query(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("fileName", filename)
-                        .analyzer("ik_smart")
-                        .operator(Operator.OR)))
+                .analyzer("ik_smart")
+                .operator(Operator.OR)))
                 // .fetchSource(new String[]{"id", "fileName", "address"}, null)
                 // 分页
                 .from(pageIndex).size(pageSize)
@@ -154,7 +154,7 @@ public class FileServiceImpl implements FileService {
             response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.info(e.getMessage());
-            return new BackMessage().failureWithMessage("查询失败请重试");
+            return R.error("查询失败请重试");
         }
         log.info("检索关键词：{}，检索文档总数：{}，最大得分：{}", filename,
                 response.getHits().getTotalHits(),
@@ -166,7 +166,7 @@ public class FileServiceImpl implements FileService {
             videoDTO.setId(hit.getId());
             videos.add(videoDTO);
         }
-        return new BackMessage(BackEnum.SUCCESS, videos);
+        return R.success(videos);
     }
 
     private String getFilename(String prefix) {
@@ -179,7 +179,7 @@ public class FileServiceImpl implements FileService {
         try {
             info = multimediaObject.getInfo();
         } catch (EncoderException e) {
-            throw new CustomException("获取视频信息失败", 400);
+            throw new CustomException(HttpStatus.BAD_REQUEST, "获取视频信息失败");
         }
         VideoDTO videoDTO = new VideoDTO();
         videoDTO.setAddress(serverpath + "resource/video/" + target.getName());

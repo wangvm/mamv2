@@ -5,17 +5,12 @@ package edu.cuz.mamv2.utils;
  * Date 2021/6/5 14:32
  * Description:
  */
-public class CustomException extends RuntimeException{
+public class CustomException extends RuntimeException {
     private final Integer code;
 
-    public CustomException(BackEnum backEnum){
-        super(backEnum.getMessage());
-        this.code = backEnum.getCode();
-    }
-
-    public CustomException(String message, Integer code) {
+    public CustomException(HttpStatus status, String message) {
         super(message);
-        this.code = code;
+        this.code = status.getCode();
     }
 
     public Integer getCode() {

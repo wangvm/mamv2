@@ -6,8 +6,7 @@ import edu.cuz.mamv2.entity.MamUser;
 import edu.cuz.mamv2.filter.LoginFilter;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.provider.SelfAuthenticationProvider;
-import edu.cuz.mamv2.utils.BackEnum;
-import edu.cuz.mamv2.utils.BackMessage;
+import edu.cuz.mamv2.utils.R;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -50,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(((request, response, accessDeniedException) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter writer = response.getWriter();
-                    BackMessage<Object> message = new BackMessage<>(BackEnum.FORBIDDEN);
+                    R<Object> message = R.error("无权限访问");
                     writer.write(JSONObject.toJSONString(message));
                     writer.flush();
                     writer.close();
@@ -58,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter out = response.getWriter();
-                    BackMessage backMessage = new BackMessage<>(BackEnum.UNAUTHORIZED);
+                    R backMessage = R.error("认证失败");
                     out.write(JSONObject.toJSONString(backMessage));
                     out.flush();
                     out.close();
@@ -67,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter out = response.getWriter();
-                    BackMessage backMessage = new BackMessage<>().successWithMessage("退出登录成功");
+                    R backMessage = R.error("退出登录成功");
                     out.write(JSONObject.toJSONString(backMessage));
                     out.flush();
                     out.close();
@@ -98,7 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 MamUser mamUser = userMapper.selectOne(queryWrapper);
                 mamUser.setPassword("");
                 response.setContentType("application/json; charset=UTF-8");
-                BackMessage backMessage = new BackMessage<MamUser>().successWithMessageAndData("登录成功", mamUser);
+                R backMessage = R.success("登录成功", mamUser);
                 PrintWriter out = response.getWriter();
                 out.write(JSONObject.toJSONString(backMessage));
                 out.flush();
@@ -111,7 +110,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
                 response.setContentType("application/json; charset=UTF-8");
                 PrintWriter out = response.getWriter();
-                BackMessage<Object> backMessage = new BackMessage<>(BackEnum.LOGIN_FAILED);
+                R<Object> backMessage = R.error("登录失败");
                 out.write(JSONObject.toJSONString(backMessage));
                 out.flush();
                 out.close();

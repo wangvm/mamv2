@@ -5,92 +5,86 @@ package edu.cuz.mamv2.utils;
  * Date 2021/9/18 11:04
  * Description:
  */
-public enum BackEnum {
+public enum HttpStatus {
     /**
      * 登录验证失败
      */
-    LOGIN_FAILED(3, "账户或密码错误"),
+    LOGIN_FAILED(3),
     /**
      * 用户不存在
      */
-    USER_NOT_EXISTS(4, "用户不存在"),
+    USER_NOT_EXISTS(4),
     /**
      * 请求正在处理中
      */
-    CONTINUE(100, "继续发送请求或者忽略这个响应"),
+    CONTINUE(100),
     /**
      * 请求成功
      */
-    SUCCESS(200, "成功"),
+    SUCCESS(200),
     /**
      * 请求成功，但是没有返回值
      */
-    NO_CONTENT(204, "请求成功"),
+    NO_CONTENT(204),
     /**
      * 请求的资源永久重定向
      */
-    MOVED_PERMANENTLY(301, "请求资源永久重定向"),
+    MOVED_PERMANENTLY(301),
     /**
      * 请求资源重定向
      */
-    FOUND(302, "资源重定向"),
+    FOUND(302),
     /**
      * 前端发送的请求格式不正确，或存在语法错误
      */
-    BAD_REQUEST(400, "参数格式错误"),
+    BAD_REQUEST(400),
     /**
      * 未认证，或认证失败
      */
-    UNAUTHORIZED(401, "请先登录"),
+    UNAUTHORIZED(401),
     /**
      * 传入参数条目不存在或错误
      */
-    DATA_ERROR(402, "数据错误，数据不存在或者重复"),
+    DATA_ERROR(402),
 
     /**
      * 无权限访问资源
      */
-    FORBIDDEN(403, "无权限访问"),
+    FORBIDDEN(403),
 
     /**
      * 请求服务不存在
      */
-    NOT_FOUND(404, "请求不存在"),
+    NOT_FOUND(404),
 
     /**
      * 请求方式错误
      */
-    REQUEST_METHOD_ERROR(405, "请求方式错误"),
+    REQUEST_METHOD_ERROR(405),
 
     /**
      * 服务器正在执行请求时发生错误
      */
-    UNKNOWN_ERROR(500, "服务未知错误"),
+    UNKNOWN_ERROR(500),
 
     /**
      * io错误
      */
-    IO_ERROR(501, "服务IO错误，请重试"),
+    IO_ERROR(501),
 
     /**
      * 服务器暂时处于超负载或正在进行停机维护，现在无法处理请求
      */
-    SERVICE_UNAVAILABLE(503, "服务暂停服务");
+    SERVICE_UNAVAILABLE(503);
 
 
     private Integer code;
-    private String message;
 
-    BackEnum(Integer code, String message) {
+    HttpStatus(Integer code) {
         this.code = code;
-        this.message = message;
     }
 
     public Integer getCode() {
         return code;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }
