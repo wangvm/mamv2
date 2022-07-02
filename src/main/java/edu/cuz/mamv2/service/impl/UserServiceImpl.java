@@ -13,6 +13,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -65,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, MamUser> implements
         queryWrapper.eq(MamUser::getAccount, username);
         MamUser mamUser = userMapper.selectOne(queryWrapper);
         if (mamUser == null) {
-            throw new CustomException(BackEnum.LOGIN_FAILED);
+            throw new BadCredentialsException(BackEnum.LOGIN_FAILED.getMessage());
         }
         // 获取用户权限，并将其添加到GrantedAuthority中
         ArrayList<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
