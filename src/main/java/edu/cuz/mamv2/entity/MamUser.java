@@ -41,11 +41,6 @@ public class MamUser implements Serializable {
     private Long createTime;
 
     /**
-     * 逻辑删除控制位
-     */
-    private Integer deleted;
-
-    /**
      * 用户权限设置，只有三种权限，ADMIN、CATALOGER、AUDITOR
      */
     private String role;

@@ -136,7 +136,7 @@ public class TaskController {
     @PostMapping("/update")
     public R updateTaskInfo(@RequestBody MamTask mamTask) {
         boolean ret = taskService.updateById(mamTask);
-        return R.success();
+        return R.success("更新成功");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -202,7 +202,7 @@ public class TaskController {
                 .set(MamTask::getStatus, TaskState.MODEIFY.getState())
                 .eq(MamTask::getStatus, TaskState.PADDING.getState())
                 .eq(MamTask::getId, taskId).update();
-        return R.success();
+        return R.success("审核完成");
     }
 
 

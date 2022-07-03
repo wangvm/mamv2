@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.setContentType("application/json; charset=UTF-8");
                     PrintWriter out = response.getWriter();
-                    R backMessage = R.error("退出登录成功");
+                    R backMessage = R.success("退出登录成功");
                     out.write(JSONObject.toJSONString(backMessage));
                     out.flush();
                     out.close();
