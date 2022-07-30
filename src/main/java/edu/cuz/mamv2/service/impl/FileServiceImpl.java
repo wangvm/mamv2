@@ -4,12 +4,11 @@ import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 import edu.cuz.mamv2.entity.MamTask;
 import edu.cuz.mamv2.entity.dto.VideoDTO;
+import edu.cuz.mamv2.exception.ServiceException;
 import edu.cuz.mamv2.extension.VideoExtenison;
 import edu.cuz.mamv2.mapper.TaskMapper;
 import edu.cuz.mamv2.repository.VideoRepository;
 import edu.cuz.mamv2.service.FileService;
-import edu.cuz.mamv2.utils.CustomException;
-import edu.cuz.mamv2.utils.HttpStatus;
 import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -36,6 +35,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,14 +61,20 @@ public class FileServiceImpl implements FileService {
     @Resource
     private TaskMapper taskMapper;
 
+    /**
+     * 保存上传的视频
+     * @param uploadVideo 上传的视频流
+     * @return
+     */
     @Override
-    public R uploadVideo(MultipartFile uploadVideo) {
+    public String uploadVideo(MultipartFile uploadVideo) {
+        // todo 重构流程
         if (CONTENTTYPE.equals(uploadVideo.getContentType())) {
             // 视频源文件名
             String originalFilename = uploadVideo.getOriginalFilename();
             VideoDTO dto = videoRepository.findByFileName(originalFilename);
             if (dto != null) {
-                return R.error("视频已存在");
+                throw new ServiceException("视频已存在");
             }
             // 视频随机名称路径
             String destination = getFilename(videoStoredPath);
@@ -80,20 +86,26 @@ public class FileServiceImpl implements FileService {
                 target.setReadable(true, false);
             } catch (IOException e) {
                 log.info("文件保存失败：{}", e.getMessage());
-                return R.error("上传失败请重试");
+                throw new ServiceException("保存失败，请重试");
             }
             // 提取视频元信息并保存到es中
             String videoInfoId = extractVideoInformation(target, originalFilename);
             // 对视频的扩展操作，计划实现异步执行提取音频并上传到云服务器提取音频文字
             videoExtenison.handleVideo(videoInfoId, target);
-            return R.success("上传文件成功");
+            return videoInfoId;
         } else {
-            return R.error("格式错误");
+            throw new ServiceException("格式错误");
         }
     }
 
+    /**
+     * 上传关键帧
+     * @param cutTime 关键帧图片
+     * @param videoUrl
+     * @return
+     */
     @Override
-    public R keyFrameCut(Long cutTime, String videoUrl) {
+    public String keyFrameCut(Long cutTime, String videoUrl) {
         String videName = videoUrl.substring(videoUrl.length() - 36);
         File video = new File(videoStoredPath + videName);
         MultimediaObject multimediaObject = new MultimediaObject(video);
@@ -105,31 +117,48 @@ public class FileServiceImpl implements FileService {
             target.setReadable(true, false);
         } catch (EncoderException e) {
             log.info("截图失败：{}", e.getMessage());
-            return R.error("截图失败");
+            throw new ServiceException("截图失败");
         }
-        return R.success(serverpath + "resource/images/" + filename.substring(filename.length() - 36));
+        String path = serverpath + "resource/images/" + filename.substring(filename.length() - 36);
+        return path;
     }
 
+    /**
+     * 获取视频信息
+     * @param taskId 名字
+     * @return {@link R}
+     */
     @Override
-    public R getVideoInfo(String taskId) {
+    public VideoDTO getVideoInfo(String taskId) {
         MamTask mamTask = taskMapper.selectById(taskId);
         String videoInfoId = mamTask.getVideoInfoId();
         Optional<VideoDTO> videoDTO = videoRepository.findById(videoInfoId);
-        if (!videoDTO.isPresent()) {
-            return R.error("视频不存在");
-        }
-        return R.success(videoDTO);
+        return videoDTO.get();
     }
 
+    /**
+     * 查询视频列表
+     * @param pageSize 分页大小
+     * @param pageIndex 当前页
+     * @return
+     */
     @Override
-    public R getVideoList(Integer pageSize, Integer pageIndex) {
+    public Page<VideoDTO> getVideoList(Integer pageSize, Integer pageIndex) {
         // 从es中查询视频列表
         Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
-        return R.success(page);
+        // todo 封装一个分页返回类
+        return page;
     }
 
+    /**
+     * 通过关键字在es中查询视频列表，默认返回5条
+     * @param filename 查询的视频关键字
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
     @Override
-    public R searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
+    public List<VideoDTO> searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
         // 通过es的match查询关键词返回结果，默认返回5条
         // 构造查询条件
         SearchSourceBuilder builder = new SearchSourceBuilder();
@@ -154,7 +183,7 @@ public class FileServiceImpl implements FileService {
             response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.info(e.getMessage());
-            return R.error("查询失败请重试");
+            throw new ServiceException("查询失败请重试");
         }
         log.info("检索关键词：{}，检索文档总数：{}，最大得分：{}", filename,
                 response.getHits().getTotalHits(),
@@ -166,20 +195,31 @@ public class FileServiceImpl implements FileService {
             videoDTO.setId(hit.getId());
             videos.add(videoDTO);
         }
-        return R.success(videos);
+        return videos;
     }
 
+    /**
+     * 获取视频名
+     * @param prefix
+     * @return {@link String}
+     */
     private String getFilename(String prefix) {
         return prefix + IdUtil.simpleUUID() + ".mp4";
     }
 
+    /**
+     * 提取视频信息
+     * @param target
+     * @param filename
+     * @return {@link String}
+     */
     private String extractVideoInformation(File target, String filename) {
         MultimediaObject multimediaObject = new MultimediaObject(target);
         MultimediaInfo info = null;
         try {
             info = multimediaObject.getInfo();
         } catch (EncoderException e) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "获取视频信息失败");
+            throw new ServiceException("获取视频信息失败");
         }
         VideoDTO videoDTO = new VideoDTO();
         videoDTO.setAddress(serverpath + "resource/video/" + target.getName());

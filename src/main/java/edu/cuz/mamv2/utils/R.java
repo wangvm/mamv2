@@ -15,6 +15,10 @@ public class R<T> {
     private R() {
     }
 
+    private R(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     private R(HttpStatus status, String message) {
         this.code = status.getCode();
@@ -47,12 +51,34 @@ public class R<T> {
         return new R(HttpStatus.BAD_REQUEST, message);
     }
 
+    public static R error(Integer code, String message) {
+        return new R(code, message);
+    }
+
     public static R error(HttpStatus status, String message) {
         return new R(status, message);
     }
 
     public static <T> R error(String message, T data) {
         return new R(HttpStatus.BAD_REQUEST, message, data);
+    }
+
+    public static R toResult(int ret) {
+        return ret > 0 ? success() : error("失败");
+    }
+
+    public static R toResult(int[] ret) {
+        if (ret.length == 0) {
+            return error("失败");
+        }
+        return success();
+    }
+
+    public static R toResult(Object object) {
+        if (object == null) {
+            return error("失败");
+        }
+        return success();
     }
 
     public Integer getCode() {

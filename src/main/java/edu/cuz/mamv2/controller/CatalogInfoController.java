@@ -1,9 +1,7 @@
 package edu.cuz.mamv2.controller;
 
 
-import edu.cuz.mamv2.entity.dto.FragmentDTO;
-import edu.cuz.mamv2.entity.dto.ProgramDTO;
-import edu.cuz.mamv2.entity.dto.ScenesDTO;
+import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.service.CatalogInfoService;
 import edu.cuz.mamv2.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -27,26 +25,25 @@ public class CatalogInfoController {
     @Resource
     private CatalogInfoService catalogInfoService;
 
-    // 添加编目记录
+    /**
+     * 添加编目记录
+     */
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/program")
     public R addProgramRecord(@RequestBody ProgramDTO program) {
-        R backMessage = catalogInfoService.addProgramRecord(program);
-        return backMessage;
+        return R.toResult(catalogInfoService.addProgramRecord(program));
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/fragment")
     public R addFragmentRecord(@RequestBody FragmentDTO fragment) {
-        R backMessage = catalogInfoService.addFragmentRecord(fragment);
-        return backMessage;
+        return R.toResult(catalogInfoService.addFragmentRecord(fragment));
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/scenes")
     public R addScenesRecord(@RequestBody ScenesDTO scenese) {
-        R backMessage = catalogInfoService.addScenesRecord(scenese);
-        return backMessage;
+        return R.toResult(catalogInfoService.addScenesRecord(scenese));
     }
 
     // 删除编目记录
@@ -54,15 +51,14 @@ public class CatalogInfoController {
     @GetMapping("/delete/{record}")
     public R deleteCatalogRecord(@PathVariable("record") String record,
                                  @RequestParam String catalogId) {
-        R backMessage = catalogInfoService.deleteCatalogRecord(catalogId, record);
-        return backMessage;
+        catalogInfoService.deleteCatalogRecord(catalogId, record);
+        return R.success();
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/delete/bulk/scenes")
     public R deleteBulkScenes(@RequestBody List<String> scenesList) {
-        R backMessage = catalogInfoService.deleteBulkScenes(scenesList);
-        return backMessage;
+        return R.toResult(catalogInfoService.deleteBulkScenes(scenesList));
     }
 
     // 获取具体记录
@@ -78,37 +74,34 @@ public class CatalogInfoController {
     @GetMapping("/get/program")
     public R getProgramRecord(@RequestParam(required = false) String catalogId,
                               @RequestParam(required = false) Long taskId) {
-        R backMessage = catalogInfoService.getProgramRecord(catalogId, taskId);
-        return backMessage;
+        return R.success(catalogInfoService.getProgramRecord(catalogId, taskId));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/get/menu")
     public R getMenu(Integer taskId) {
-        R backMessage = catalogInfoService.getMenu(taskId);
-        return backMessage;
+        List<MenuVO> menus = catalogInfoService.getMenu(taskId);
+        // todo 构建为树结构再返回
+        return R.success(menus);
     }
 
     // 更新具体的记录
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/program")
     public R updateProgramRecord(@RequestBody ProgramDTO program) {
-        R backMessage = catalogInfoService.updateProgramRecord(program);
-        return backMessage;
+        return R.toResult(catalogInfoService.updateProgramRecord(program));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/fragment")
     public R updateFragmentRecord(@RequestBody FragmentDTO fragment) {
-        R backMessage = catalogInfoService.updateFragmentRecord(fragment);
-        return backMessage;
+        return R.toResult(catalogInfoService.updateFragmentRecord(fragment));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/scenes")
     public R updateScenesRecord(@RequestBody ScenesDTO scenese) {
-        R backMessage = catalogInfoService.updateScenesRecord(scenese);
-        return backMessage;
+        return R.toResult(catalogInfoService.updateScenesRecord(scenese));
     }
 }
 

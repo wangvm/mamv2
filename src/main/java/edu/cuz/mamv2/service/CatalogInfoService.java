@@ -1,8 +1,6 @@
 package edu.cuz.mamv2.service;
 
-import edu.cuz.mamv2.entity.dto.FragmentDTO;
-import edu.cuz.mamv2.entity.dto.ProgramDTO;
-import edu.cuz.mamv2.entity.dto.ScenesDTO;
+import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.utils.R;
 
 import java.util.List;
@@ -20,25 +18,25 @@ public interface CatalogInfoService {
      * @param program 节目层实体
      * @return 添加结果
      */
-    R addProgramRecord(ProgramDTO program);
+    ProgramDTO addProgramRecord(ProgramDTO program);
 
-    R addFragmentRecord(FragmentDTO fragment);
+    FragmentDTO addFragmentRecord(FragmentDTO fragment);
 
-    R addScenesRecord(ScenesDTO scenese);
+    ScenesDTO addScenesRecord(ScenesDTO scenese);
 
-    R deleteCatalogRecord(String catalogId, String record);
+    void deleteCatalogRecord(String catalogId, String record);
 
     R getCatalogRecord(String record, String catalogId);
 
-    R getMenu(Integer taskId);
+    List<MenuVO> getMenu(Integer taskId);
 
-    R updateProgramRecord(ProgramDTO program);
+    ProgramDTO updateProgramRecord(ProgramDTO program);
 
-    R updateFragmentRecord(FragmentDTO fragment);
+    FragmentDTO updateFragmentRecord(FragmentDTO fragment);
 
-    R updateScenesRecord(ScenesDTO scenese);
+    ScenesDTO updateScenesRecord(ScenesDTO scenese);
 
-    R deleteBulkScenes(List<String> scenesList);
+    int deleteBulkScenes(List<String> scenesList);
 
-    R getProgramRecord(String catalogId, Long taskId);
+    ProgramDTO getProgramRecord(String catalogId, Long taskId);
 }

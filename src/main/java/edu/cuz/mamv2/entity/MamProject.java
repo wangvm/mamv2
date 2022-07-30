@@ -1,11 +1,13 @@
 package edu.cuz.mamv2.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -26,6 +28,7 @@ public class MamProject implements Serializable {
     /**
      * 项目id
      */
+    @NotNull(groups = {Update.class})
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -42,11 +45,13 @@ public class MamProject implements Serializable {
     /**
      * 项目负责人账户
      */
+    @TableField(updateStrategy = FieldStrategy.NOT_NULL, insertStrategy = FieldStrategy.NOT_NULL)
     private Long leader;
 
     /**
      * 负责人名称
      */
+    @TableField(updateStrategy = FieldStrategy.NOT_EMPTY, insertStrategy = FieldStrategy.NOT_EMPTY)
     private String leaderName;
 
     /**

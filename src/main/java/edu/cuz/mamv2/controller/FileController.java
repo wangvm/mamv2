@@ -23,16 +23,14 @@ public class FileController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload/video")
     public R uploadVideo(MultipartFile file) {
-        R backMessage = videoService.uploadVideo(file);
-        return backMessage;
+        return R.toResult(videoService.uploadVideo(file));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/videoList")
     public R getVideoList(@RequestParam(defaultValue = "5") Integer pageSize,
                           @RequestParam(defaultValue = "1") Integer pageIndex) {
-        R videoList = videoService.getVideoList(pageSize, pageIndex - 1);
-        return videoList;
+        return R.success(videoService.getVideoList(pageSize, pageIndex - 1));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -40,22 +38,19 @@ public class FileController {
     public R searchVideoByName(@RequestParam String filename,
                                @RequestParam(defaultValue = "5") Integer pageSize,
                                @RequestParam(defaultValue = "1") Integer pageIndex) {
-        R backMessage = videoService.searchVideoByName(filename, pageIndex - 1, pageSize);
-        return backMessage;
+        return R.success(videoService.searchVideoByName(filename, pageIndex - 1, pageSize));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/videoInfo")
     public R getVideoInfo(String taskId) {
-        R backMessage = videoService.getVideoInfo(taskId);
-        return backMessage;
+        return R.success(videoService.getVideoInfo(taskId));
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @GetMapping("/keyframe")
     public R keyFrameCut(Long cutTime, String videoUrl) {
-        R backMessage = videoService.keyFrameCut(cutTime, videoUrl);
-        return backMessage;
+        return R.success(videoService.keyFrameCut(cutTime, videoUrl));
     }
 
     public R removeVideo(String videoName) {

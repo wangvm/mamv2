@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import edu.cuz.mamv2.entity.MamProject;
 import edu.cuz.mamv2.service.ProjectService;
 import edu.cuz.mamv2.utils.R;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,9 +34,8 @@ public class ProjectController {
         // 预处理，添加项目创建时间
         mamProject.setCreateTime(System.currentTimeMillis());
         // 执行保存操作
-        boolean ret;
         try {
-            ret = projectService.save(mamProject);
+            projectService.save(mamProject);
         } catch (DuplicateKeyException e) {
             return R.error("项目已存在");
         }
@@ -47,21 +48,20 @@ public class ProjectController {
         // 提取删除所需的数据：项目名称和id
         Long id = mamProject.getId();
         boolean ret = projectService.removeById(id);
-        if (ret) {
-            return R.success("删除项目成功");
-        } else {
+        if (!ret) {
             return R.error("项目不存在");
         }
+        return R.success("删除项目成功");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/leader")
-    public R updateLeader(@RequestBody MamProject mamProject) {
-        // 提取删除所需的数据：项目名称和id
+    public R updateLeader(@Validated(Update.class) @RequestBody MamProject mamProject) {
+        // 提取所需的数据：项目名称和id
         Long id = mamProject.getId();
         Long leader = mamProject.getLeader();
         String leaderName = mamProject.getLeaderName();
-        boolean ret = projectService.lambdaUpdate()
+        projectService.lambdaUpdate()
                 .set(MamProject::getLeader, leader)
                 .set(MamProject::getLeaderName, leaderName)
                 .eq(MamProject::getId, id).update();
@@ -71,16 +71,17 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
-    public R updateProjectName(@RequestBody MamProject mamProject) {
+    public R updateProjectName(@Validated(Update.class) @RequestBody MamProject mamProject) {
         Long id = mamProject.getId();
         String name = mamProject.getName();
-        boolean ret = projectService.lambdaUpdate()
+        projectService.lambdaUpdate()
                 .set(MamProject::getName, name)
                 .eq(MamProject::getId, id).update();
         return R.success("更新成功");
 
     }
 
+    @Deprecated
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/task/add")
     public R updateTaskNumber(Integer projectId) {
@@ -91,6 +92,7 @@ public class ProjectController {
         return R.success();
     }
 
+    @Deprecated
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/task/finished")
     public R finishedTask(Integer projectId) {

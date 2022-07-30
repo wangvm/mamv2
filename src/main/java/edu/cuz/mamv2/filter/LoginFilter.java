@@ -1,7 +1,7 @@
 package edu.cuz.mamv2.filter;
 
 import com.alibaba.fastjson.JSONObject;
-import edu.cuz.mamv2.utils.CustomException;
+import edu.cuz.mamv2.exception.ServiceException;
 import edu.cuz.mamv2.utils.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -35,7 +35,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             } catch (IOException e) {
             }
             if (loginData == null) {
-                throw new CustomException(HttpStatus.LOGIN_FAILED, "登录失败");
+                throw new ServiceException("登录失败");
             }
             String username = loginData.get(getUsernameParameter());
             String password = loginData.get(getPasswordParameter());

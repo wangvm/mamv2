@@ -21,6 +21,9 @@ spring:
       uris: 192.168.111.128:9200
       password: wajing
       username: elastic
+  data:
+    mongodb:
+      host: localhost
 mybatis-plus:
   configuration:
     # 控制打印sql

@@ -3,6 +3,7 @@ package edu.cuz.mamv2.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import edu.cuz.mamv2.entity.dto.*;
+import edu.cuz.mamv2.exception.ServiceException;
 import edu.cuz.mamv2.repository.FragmentRepository;
 import edu.cuz.mamv2.repository.ProgramRepository;
 import edu.cuz.mamv2.repository.ScenesRepository;
@@ -48,38 +49,29 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
 
 
     @Override
-    public R addProgramRecord(ProgramDTO program) {
-        Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
-        if (b.isPresent()) {
-            return R.error("任务已存在");
+    public ProgramDTO addProgramRecord(ProgramDTO program) {
+        Optional<ProgramDTO> programDTO = programRepository.findByTaskId(program.getTaskId());
+        if (programDTO.isPresent()) {
+            throw new ServiceException("任务已存在");
         }
         ProgramDTO save = programRepository.save(program);
-        if (save == null) {
-            return R.error("添加失败，请重试");
-        }
-        return R.success();
+        return save;
     }
 
     @Override
-    public R addFragmentRecord(FragmentDTO fragment) {
+    public FragmentDTO addFragmentRecord(FragmentDTO fragment) {
         FragmentDTO save = fragmentRepository.save(fragment);
-        if (save == null) {
-            return R.error("添加失败，请重试");
-        }
-        return R.success(save);
+        return save;
     }
 
     @Override
-    public R addScenesRecord(ScenesDTO scenese) {
+    public ScenesDTO addScenesRecord(ScenesDTO scenese) {
         ScenesDTO save = scenesRepository.save(scenese);
-        if (save == null) {
-            return R.error("添加失败，请重试");
-        }
-        return R.success(save);
+        return save;
     }
 
     @Override
-    public R deleteCatalogRecord(String catalogId, String record) {
+    public void deleteCatalogRecord(String catalogId, String record) {
         switch (record) {
             case "fragment":
                 fragmentRepository.deleteById(catalogId);
@@ -88,9 +80,8 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
                 scenesRepository.deleteById(catalogId);
                 break;
             default:
-                return R.error("删除类型不存在");
+                throw new ServiceException("删除类型不存在");
         }
-        return R.success();
     }
 
     @Override
@@ -106,7 +97,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             case "scenes":
                 Optional<ScenesDTO> scenes = scenesRepository.findById(catalogId);
                 if (scenes.isPresent()) {
-                    return R.success(scenes);
+                    return R.success(scenes.get());
                 } else {
                     return R.error("数据不存在");
                 }
@@ -116,7 +107,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     }
 
     @Override
-    public R getMenu(Integer taskId) {
+    public List<MenuVO> getMenu(Integer taskId) {
         // 构建搜索条件
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.fetchSource(new String[]{"id", "menu"}, null)
@@ -130,7 +121,7 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
-            return R.error("查询失败请重试");
+            throw new ServiceException("查询失败，请重试");
         }
         log.info("检索任务id：{}，检索文档总数：{}，最大得分：{}", taskId,
                 response.getHits().getTotalHits(),
@@ -144,38 +135,29 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             MenuVO menuVO = new MenuVO(id, menu);
             menus.add(menuVO);
         }
-        return R.success(menus);
+        return menus;
     }
 
     @Override
-    public R updateProgramRecord(ProgramDTO program) {
+    public ProgramDTO updateProgramRecord(ProgramDTO program) {
         ProgramDTO save = programRepository.save(program);
-        if (save == null) {
-            return R.error("更新失败，请重试");
-        }
-        return R.success("更新成功");
+        return save;
     }
 
     @Override
-    public R updateFragmentRecord(FragmentDTO fragment) {
+    public FragmentDTO updateFragmentRecord(FragmentDTO fragment) {
         FragmentDTO save = fragmentRepository.save(fragment);
-        if (save == null) {
-            return R.error("更新失败，请重试");
-        }
-        return R.success("更新成功");
+        return save;
     }
 
     @Override
-    public R updateScenesRecord(ScenesDTO scenese) {
+    public ScenesDTO updateScenesRecord(ScenesDTO scenese) {
         ScenesDTO save = scenesRepository.save(scenese);
-        if (save == null) {
-            return R.error("更新失败，请重试");
-        }
-        return R.success();
+        return save;
     }
 
     @Override
-    public R deleteBulkScenes(List<String> scenesList) {
+    public int deleteBulkScenes(List<String> scenesList) {
         DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest("scenes");
         deleteByQueryRequest.setConflicts("proceed");
         deleteByQueryRequest.setQuery(QueryBuilders.termsQuery("_id", scenesList));
@@ -184,23 +166,19 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             response = restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.info("批量删除场景层数据失败,message:{}", e.getMessage());
-            return R.error(e.getMessage());
+            throw new ServiceException("删除失败");
         }
-        return R.success(response);
+        return response.getBatches();
     }
 
     @Override
-    public R getProgramRecord(String catalogId, Long taskId) {
+    public ProgramDTO getProgramRecord(String catalogId, Long taskId) {
         Optional<ProgramDTO> program;
         if (catalogId == null) {
             program = programRepository.findByTaskId(taskId);
         } else {
             program = programRepository.findById(catalogId);
         }
-        if (program.isPresent()) {
-            return R.success(program);
-        } else {
-            return R.error("数据不存在");
-        }
+        return program.get();
     }
 }
