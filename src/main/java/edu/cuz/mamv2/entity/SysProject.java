@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("mam_project")
-public class MamProject implements Serializable {
+public class SysProject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -2,7 +2,7 @@ package edu.cuz.mamv2.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import edu.cuz.mamv2.entity.MamUser;
+import edu.cuz.mamv2.entity.SysUser;
 import edu.cuz.mamv2.filter.LoginFilter;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.provider.SelfAuthenticationProvider;
@@ -92,12 +92,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                 String account = (String) authentication.getPrincipal();
-                LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.select(MamUser::getUsername, MamUser::getAccount, MamUser::getRole).eq(MamUser::getAccount, account);
-                MamUser mamUser = userMapper.selectOne(queryWrapper);
-                mamUser.setPassword("");
+                LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.select(SysUser::getUsername, SysUser::getAccount, SysUser::getRole).eq(SysUser::getAccount, account);
+                SysUser sysUser = userMapper.selectOne(queryWrapper);
+                sysUser.setPassword("");
                 response.setContentType("application/json; charset=UTF-8");
-                R backMessage = R.success("登录成功", mamUser);
+                R backMessage = R.success("登录成功", sysUser);
                 PrintWriter out = response.getWriter();
                 out.write(JSONObject.toJSONString(backMessage));
                 out.flush();

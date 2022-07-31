@@ -1,6 +1,8 @@
-package edu.cuz.mamv2.entity.dto;
+package edu.cuz.mamv2.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +12,8 @@ import java.io.Serializable;
  * @description 编目数据菜单
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Menu implements Serializable {
     /**
      * 菜单id

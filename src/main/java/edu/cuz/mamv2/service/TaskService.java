@@ -2,7 +2,7 @@ package edu.cuz.mamv2.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import edu.cuz.mamv2.entity.MamTask;
+import edu.cuz.mamv2.entity.SysTask;
 import edu.cuz.mamv2.utils.R;
 
 /**
@@ -13,7 +13,7 @@ import edu.cuz.mamv2.utils.R;
  * @author VM
  * @since 2022/01/17 10:56
  */
-public interface TaskService extends IService<MamTask> {
+public interface TaskService extends IService<SysTask> {
 
     /**
      * 查询账户
@@ -23,5 +23,5 @@ public interface TaskService extends IService<MamTask> {
      * @param pageSize 页面大小
      * @return {@link R}
      */
-    Page<MamTask> queryByAccount(String account, Integer projectId, Integer current, Integer pageSize);
+    Page<SysTask> queryByAccount(String account, Integer projectId, Integer current, Integer pageSize);
 }

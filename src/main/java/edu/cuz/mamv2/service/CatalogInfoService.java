@@ -1,5 +1,8 @@
 package edu.cuz.mamv2.service;
 
+import edu.cuz.mamv2.entity.MamFragment;
+import edu.cuz.mamv2.entity.MamProgram;
+import edu.cuz.mamv2.entity.MamScenes;
 import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.utils.R;
 
@@ -18,11 +21,11 @@ public interface CatalogInfoService {
      * @param program 节目层实体
      * @return 添加结果
      */
-    ProgramDTO addProgramRecord(ProgramDTO program);
+    MamProgram addProgramRecord(MamProgram program);
 
-    FragmentDTO addFragmentRecord(FragmentDTO fragment);
+    MamFragment addFragmentRecord(MamFragment fragment);
 
-    ScenesDTO addScenesRecord(ScenesDTO scenese);
+    MamScenes addScenesRecord(MamScenes scenese);
 
     void deleteCatalogRecord(String catalogId, String record);
 
@@ -30,13 +33,13 @@ public interface CatalogInfoService {
 
     List<MenuVO> getMenu(Integer taskId);
 
-    ProgramDTO updateProgramRecord(ProgramDTO program);
+    MamProgram updateProgramRecord(MamProgram program);
 
-    FragmentDTO updateFragmentRecord(FragmentDTO fragment);
+    MamFragment updateFragmentRecord(MamFragment fragment);
 
-    ScenesDTO updateScenesRecord(ScenesDTO scenese);
+    MamScenes updateScenesRecord(MamScenes scenese);
 
     int deleteBulkScenes(List<String> scenesList);
 
-    ProgramDTO getProgramRecord(String catalogId, Long taskId);
+    MamProgram getProgramRecord(String catalogId, Long taskId);
 }

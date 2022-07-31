@@ -1,6 +1,9 @@
 package edu.cuz.mamv2.controller;
 
 
+import edu.cuz.mamv2.entity.MamFragment;
+import edu.cuz.mamv2.entity.MamProgram;
+import edu.cuz.mamv2.entity.MamScenes;
 import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.service.CatalogInfoService;
 import edu.cuz.mamv2.utils.R;
@@ -30,19 +33,19 @@ public class CatalogInfoController {
      */
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/program")
-    public R addProgramRecord(@RequestBody ProgramDTO program) {
+    public R addProgramRecord(@RequestBody MamProgram program) {
         return R.toResult(catalogInfoService.addProgramRecord(program));
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/fragment")
-    public R addFragmentRecord(@RequestBody FragmentDTO fragment) {
+    public R addFragmentRecord(@RequestBody MamFragment fragment) {
         return R.toResult(catalogInfoService.addFragmentRecord(fragment));
     }
 
     @PreAuthorize("hasRole('CATALOGER')")
     @PostMapping("/add/scenes")
-    public R addScenesRecord(@RequestBody ScenesDTO scenese) {
+    public R addScenesRecord(@RequestBody MamScenes scenese) {
         return R.toResult(catalogInfoService.addScenesRecord(scenese));
     }
 
@@ -88,19 +91,19 @@ public class CatalogInfoController {
     // 更新具体的记录
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/program")
-    public R updateProgramRecord(@RequestBody ProgramDTO program) {
+    public R updateProgramRecord(@RequestBody MamProgram program) {
         return R.toResult(catalogInfoService.updateProgramRecord(program));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/fragment")
-    public R updateFragmentRecord(@RequestBody FragmentDTO fragment) {
+    public R updateFragmentRecord(@RequestBody MamFragment fragment) {
         return R.toResult(catalogInfoService.updateFragmentRecord(fragment));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/scenes")
-    public R updateScenesRecord(@RequestBody ScenesDTO scenese) {
+    public R updateScenesRecord(@RequestBody MamScenes scenese) {
         return R.toResult(catalogInfoService.updateScenesRecord(scenese));
     }
 }

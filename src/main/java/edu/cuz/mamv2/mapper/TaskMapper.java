@@ -1,7 +1,7 @@
 package edu.cuz.mamv2.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import edu.cuz.mamv2.entity.MamTask;
+import edu.cuz.mamv2.entity.SysTask;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import edu.cuz.mamv2.entity.MamTask;
  * @author VM
  * @since 2022/01/17 10:56
  */
-public interface TaskMapper extends BaseMapper<MamTask> {
+public interface TaskMapper extends BaseMapper<SysTask> {
 
 }

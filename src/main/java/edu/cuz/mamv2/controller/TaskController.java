@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import edu.cuz.mamv2.entity.MamTask;
-import edu.cuz.mamv2.entity.TaskDTO;
+import edu.cuz.mamv2.entity.*;
 import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.enums.TaskState;
 import edu.cuz.mamv2.repository.ProgramRepository;
@@ -48,14 +47,14 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public R addTask(@RequestBody TaskDTO taskDTO) {
-        MamTask mamTask = taskDTO.getTaskInfo();
-        VideoDTO videoInfo = taskDTO.getVideoInfo();
-        mamTask.setCreateTime(System.currentTimeMillis());
-        mamTask.setVideoInfoId(videoInfo.getId());
-        boolean ret = taskService.save(mamTask);
+        SysTask sysTask = taskDTO.getTaskInfo();
+        VideoInfo videoInfo = taskDTO.getVideoInfo();
+        sysTask.setCreateTime(System.currentTimeMillis());
+        sysTask.setVideoInfoId(videoInfo.getId());
+        boolean ret = taskService.save(sysTask);
         String filename = videoInfo.getFileName();
-        ProgramDTO program = new ProgramDTO();
-        program.setTaskId(mamTask.getId());
+        MamProgram program = new MamProgram();
+        program.setTaskId(sysTask.getId());
         Menu menu = new Menu();
         menu.setId(1L);
         menu.setCheck(0);
@@ -69,11 +68,11 @@ public class TaskController {
         program.setStartPoint(new Attributes("0"));
         program.setOutPoint(new Attributes(String.valueOf(videoInfo.getDuration() / 1000)));
         log.info(program.toString());
-        Optional<ProgramDTO> b = programRepository.findByTaskId(program.getTaskId());
+        Optional<MamProgram> b = programRepository.findByTaskId(program.getTaskId());
         if (b.isPresent()) {
             return R.error("任务已存在");
         }
-        ProgramDTO save = programRepository.save(program);
+        MamProgram save = programRepository.save(program);
         if (save == null) {
             return R.error("添加失败，请重试");
         }
@@ -83,18 +82,18 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addMany")
-    public R addManyTask(@RequestBody ValidationList<MamTask> mamTasks) {
-        for (MamTask mamTask: mamTasks) {
-            mamTask.setCreateTime(System.currentTimeMillis());
+    public R addManyTask(@RequestBody ValidationList<SysTask> sysTasks) {
+        for (SysTask sysTask: sysTasks) {
+            sysTask.setCreateTime(System.currentTimeMillis());
         }
-        boolean ret = taskService.saveBatch(mamTasks);
+        boolean ret = taskService.saveBatch(sysTasks);
         return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
-    public R deleteTask(@RequestBody MamTask mamTask) {
-        Long id = mamTask.getId();
+    public R deleteTask(@RequestBody SysTask sysTask) {
+        Long id = sysTask.getId();
         boolean ret = taskService.removeById(id);
         DeleteByQueryRequest request = new DeleteByQueryRequest("program", "fragment", "scenes");
         request.setQuery(QueryBuilders.termQuery("taskId", id));
@@ -108,61 +107,61 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/name")
-    public R updateName(@RequestBody MamTask mamTask) {
-        String name = mamTask.getName();
-        Long id = mamTask.getId();
-        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(MamTask::getName, name)
-                .eq(MamTask::getId, id);
+    public R updateName(@RequestBody SysTask sysTask) {
+        String name = sysTask.getName();
+        Long id = sysTask.getId();
+        LambdaUpdateWrapper<SysTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(SysTask::getName, name)
+                .eq(SysTask::getId, id);
         boolean ret = taskService.update(updateWrapper);
         return R.success();
     }
 
     @Deprecated
     @PostMapping("/update/project")
-    public R updateProject(@RequestBody MamTask mamTask) {
-        Long name = mamTask.getProject();
-        Long projectId = mamTask.getProject();
-        String projectName = mamTask.getProjectName();
-        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(MamTask::getName, name)
-                .set(MamTask::getProjectName, projectName)
-                .eq(MamTask::getProject, projectId);
+    public R updateProject(@RequestBody SysTask sysTask) {
+        Long name = sysTask.getProject();
+        Long projectId = sysTask.getProject();
+        String projectName = sysTask.getProjectName();
+        LambdaUpdateWrapper<SysTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(SysTask::getName, name)
+                .set(SysTask::getProjectName, projectName)
+                .eq(SysTask::getProject, projectId);
         boolean ret = taskService.update(updateWrapper);
         return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
-    public R updateTaskInfo(@RequestBody MamTask mamTask) {
-        boolean ret = taskService.updateById(mamTask);
+    public R updateTaskInfo(@RequestBody SysTask sysTask) {
+        boolean ret = taskService.updateById(sysTask);
         return R.success("更新成功");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/cataloger")
-    public R updateCataloger(@RequestBody MamTask mamTask) {
-        Long name = mamTask.getProject();
-        Long cataloger = mamTask.getCataloger();
-        String catalogerName = mamTask.getCatalogerName();
-        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(MamTask::getName, name)
-                .set(MamTask::getProjectName, catalogerName)
-                .eq(MamTask::getProject, cataloger);
+    public R updateCataloger(@RequestBody SysTask sysTask) {
+        Long name = sysTask.getProject();
+        Long cataloger = sysTask.getCataloger();
+        String catalogerName = sysTask.getCatalogerName();
+        LambdaUpdateWrapper<SysTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(SysTask::getName, name)
+                .set(SysTask::getProjectName, catalogerName)
+                .eq(SysTask::getProject, cataloger);
         boolean ret = taskService.update(updateWrapper);
         return R.success();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update/auditor")
-    public R updateAuditor(@RequestBody MamTask mamTask) {
-        Long name = mamTask.getProject();
-        Long auditor = mamTask.getAuditor();
-        String auditorName = mamTask.getAuditorName();
-        LambdaUpdateWrapper<MamTask> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(MamTask::getName, name)
-                .set(MamTask::getProjectName, auditorName)
-                .eq(MamTask::getProject, auditor);
+    public R updateAuditor(@RequestBody SysTask sysTask) {
+        Long name = sysTask.getProject();
+        Long auditor = sysTask.getAuditor();
+        String auditorName = sysTask.getAuditorName();
+        LambdaUpdateWrapper<SysTask> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(SysTask::getName, name)
+                .set(SysTask::getProjectName, auditorName)
+                .eq(SysTask::getProject, auditor);
         boolean ret = taskService.update(updateWrapper);
         return R.success();
     }
@@ -177,10 +176,10 @@ public class TaskController {
     public R submitAudit(Integer taskId) {
         if (ObjectUtil.isNotNull(taskId)) {
             boolean ret = taskService.lambdaUpdate()
-                    .set(MamTask::getStatus, TaskState.PADDING.getState())
-                    .eq(MamTask::getId, taskId)
-                    .and(i -> i.eq(MamTask::getStatus, TaskState.CATALOG.getState())
-                            .or().eq(MamTask::getStatus, TaskState.MODEIFY.getState()))
+                    .set(SysTask::getStatus, TaskState.PADDING.getState())
+                    .eq(SysTask::getId, taskId)
+                    .and(i -> i.eq(SysTask::getStatus, TaskState.CATALOG.getState())
+                            .or().eq(SysTask::getStatus, TaskState.MODEIFY.getState()))
                     .update();
             if (ret) {
                 return R.success("提交审核成功");
@@ -199,9 +198,9 @@ public class TaskController {
     @GetMapping("/reback")
     public R rebackCatalog(Integer taskId) {
         boolean ret = taskService.lambdaUpdate()
-                .set(MamTask::getStatus, TaskState.MODEIFY.getState())
-                .eq(MamTask::getStatus, TaskState.PADDING.getState())
-                .eq(MamTask::getId, taskId).update();
+                .set(SysTask::getStatus, TaskState.MODEIFY.getState())
+                .eq(SysTask::getStatus, TaskState.PADDING.getState())
+                .eq(SysTask::getId, taskId).update();
         return R.success("审核完成");
     }
 
@@ -215,18 +214,18 @@ public class TaskController {
     @GetMapping("/pass")
     public R passCatalog(Integer taskId) {
         boolean ret = taskService.lambdaUpdate()
-                .set(MamTask::getStatus, TaskState.PADDING.getState())
-                .eq(MamTask::getStatus, TaskState.FINISHED.getState())
-                .eq(MamTask::getId, taskId).update();
+                .set(SysTask::getStatus, TaskState.PADDING.getState())
+                .eq(SysTask::getStatus, TaskState.FINISHED.getState())
+                .eq(SysTask::getId, taskId).update();
         return R.success("审核通过");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/name")
     public R queryByName(String name) {
-        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamTask::getName, name);
-        MamTask target = taskService.getOne(queryWrapper);
+        LambdaQueryWrapper<SysTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysTask::getName, name);
+        SysTask target = taskService.getOne(queryWrapper);
         return R.success(target);
     }
 
@@ -235,10 +234,10 @@ public class TaskController {
     public R queryByProject(@RequestParam(required = true) Integer projectId,
                             @RequestParam(required = false, defaultValue = "1") Integer current,
                             @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamTask::getProject, projectId)
-                .orderByDesc(MamTask::getCreateTime);
-        Page<MamTask> target = taskService.page(new Page<MamTask>(current, pageSize), queryWrapper);
+        LambdaQueryWrapper<SysTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysTask::getProject, projectId)
+                .orderByDesc(SysTask::getCreateTime);
+        Page<SysTask> target = taskService.page(new Page<SysTask>(current, pageSize), queryWrapper);
         return R.success(target);
     }
 
@@ -247,25 +246,25 @@ public class TaskController {
     public R queryByAccount(String account, Integer projectId,
                             @RequestParam(required = false, defaultValue = "1") Integer current,
                             @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        Page<MamTask> page = taskService.queryByAccount(account, projectId, current, pageSize);
+        Page<SysTask> page = taskService.queryByAccount(account, projectId, current, pageSize);
         return R.success(page);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/cataloger")
     public R queryByCataloger(Integer catalogerId) {
-        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamTask::getCataloger, catalogerId);
-        MamTask target = taskService.getOne(queryWrapper);
+        LambdaQueryWrapper<SysTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysTask::getCataloger, catalogerId);
+        SysTask target = taskService.getOne(queryWrapper);
         return R.success(target);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/query/auditor")
     public R queryByAuditor(Integer auditorId) {
-        LambdaQueryWrapper<MamTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamTask::getAuditor, auditorId);
-        MamTask target = taskService.getOne(queryWrapper);
+        LambdaQueryWrapper<SysTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysTask::getAuditor, auditorId);
+        SysTask target = taskService.getOne(queryWrapper);
         return R.success(target);
     }
 
@@ -276,10 +275,10 @@ public class TaskController {
                            @RequestParam(required = false, defaultValue = "1") Integer isAsc,
                            @RequestParam(required = false, defaultValue = "0") Integer current,
                            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        QueryWrapper<MamTask> queryWrapper = new QueryWrapper<MamTask>();
+        QueryWrapper<SysTask> queryWrapper = new QueryWrapper<SysTask>();
         queryWrapper.eq("status", TaskState.valueOf(status).getState())
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<MamTask> page = taskService.page(new Page<MamTask>(current, pageSize),
+        Page<SysTask> page = taskService.page(new Page<SysTask>(current, pageSize),
                 queryWrapper);
         return R.success(page);
     }

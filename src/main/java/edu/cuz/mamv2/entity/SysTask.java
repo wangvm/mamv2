@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("mam_task")
-public class MamTask implements Serializable {
+public class SysTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

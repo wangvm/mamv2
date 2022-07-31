@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import edu.cuz.mamv2.entity.MamUser;
+import edu.cuz.mamv2.entity.SysUser;
 import edu.cuz.mamv2.entity.dto.ValidationList;
 import edu.cuz.mamv2.service.UserService;
 import edu.cuz.mamv2.utils.R;
@@ -37,15 +37,15 @@ public class UserController {
     private final RedisTemplate redisTemplate;
 
     @PostMapping("/add")
-    public R addUser(@RequestBody MamUser mamUser) {
+    public R addUser(@RequestBody SysUser sysUser) {
         // 对user数据预处理
-        mamUser.setCreateTime(System.currentTimeMillis());
+        sysUser.setCreateTime(System.currentTimeMillis());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(mamUser.getPassword());
-        mamUser.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(sysUser.getPassword());
+        sysUser.setPassword(encodedPassword);
 
         // 保存到数据库
-        boolean ret = userService.save(mamUser);
+        boolean ret = userService.save(sysUser);
         if (ret) {
             return R.success("注册成功");
         } else {
@@ -54,47 +54,47 @@ public class UserController {
     }
 
     @PostMapping("/addmany")
-    public R addManyUser(@RequestBody ValidationList<MamUser> mamUsers) {
-        for (MamUser mamUser: mamUsers) {
+    public R addManyUser(@RequestBody ValidationList<SysUser> sysUsers) {
+        for (SysUser sysUser: sysUsers) {
             // 对user数据预处理
-            mamUser.setCreateTime(System.currentTimeMillis());
+            sysUser.setCreateTime(System.currentTimeMillis());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(mamUser.getPassword());
-            mamUser.setPassword(encodedPassword);
+            String encodedPassword = passwordEncoder.encode(sysUser.getPassword());
+            sysUser.setPassword(encodedPassword);
         }
-        userService.saveIgnoreBatch(mamUsers);
+        userService.saveIgnoreBatch(sysUsers);
         return R.success();
     }
 
     @PostMapping("/delete")
-    public R deleteUser(@RequestBody MamUser mamUser) {
-        String account = mamUser.getAccount();
+    public R deleteUser(@RequestBody SysUser sysUser) {
+        String account = sysUser.getAccount();
         if (account == null) {
             return R.error("用户不存在");
         }
-        QueryWrapper<MamUser> wrapper = new QueryWrapper<>();
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", account);
         userService.remove(wrapper);
         return R.success();
     }
 
     @PostMapping("/update")
-    public R updateUserInfo(@RequestBody MamUser mamUser) {
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamUser::getAccount, mamUser.getAccount());
-        boolean ret = userService.update(mamUser, queryWrapper);
+    public R updateUserInfo(@RequestBody SysUser sysUser) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, sysUser.getAccount());
+        boolean ret = userService.update(sysUser, queryWrapper);
         // 重新加密密码，加盐值
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encryptPassword = passwordEncoder.encode(mamUser.getPassword());
-        mamUser.setPassword(encryptPassword);
+        String encryptPassword = passwordEncoder.encode(sysUser.getPassword());
+        sysUser.setPassword(encryptPassword);
         return R.success();
     }
 
     @PostMapping("/update/username")
-    public R updateUsername(@RequestBody MamUser mamUser) {
-        String username = mamUser.getUsername();
-        String account = mamUser.getAccount();
-        UpdateWrapper<MamUser> wrapper = new UpdateWrapper<>();
+    public R updateUsername(@RequestBody SysUser sysUser) {
+        String username = sysUser.getUsername();
+        String account = sysUser.getAccount();
+        UpdateWrapper<SysUser> wrapper = new UpdateWrapper<>();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         wrapper.eq("account", account).set("username", username);
         boolean ret = userService.update(wrapper);
@@ -102,19 +102,19 @@ public class UserController {
     }
 
     @PostMapping("/update/password")
-    public R updatePassword(@RequestBody MamUser mamUser,
+    public R updatePassword(@RequestBody SysUser sysUser,
                             String secretKeyId) {
         // 获取需要修改的信息
-        String account = mamUser.getAccount();
-        String password = mamUser.getPassword();
+        String account = sysUser.getAccount();
+        String password = sysUser.getPassword();
 
         String secretKey = (String) redisTemplate.boundValueOps(secretKeyId).get();
         String decryptPasswod = SecretUtils.aesDecrypt(password, secretKey);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptPassword = passwordEncoder.encode(decryptPasswod);
         boolean ret = userService.lambdaUpdate()
-                .eq(MamUser::getAccount, account)
-                .set(MamUser::getPassword, encryptPassword)
+                .eq(SysUser::getAccount, account)
+                .set(SysUser::getPassword, encryptPassword)
                 .update();
         return R.success();
 
@@ -127,41 +127,41 @@ public class UserController {
      */
     @GetMapping("/query/account")
     public R queryUserByAccount(String account) {
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamUser::getAccount, account)
-                .select(MamUser::getAccount, MamUser::getUsername, MamUser::getCreateTime);
-        MamUser mamUser = userService.getOne(queryWrapper);
-        return R.success(mamUser);
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, account)
+                .select(SysUser::getAccount, SysUser::getUsername, SysUser::getCreateTime);
+        SysUser sysUser = userService.getOne(queryWrapper);
+        return R.success(sysUser);
     }
 
     @GetMapping("/query/name")
     public R queryUserByName(@RequestParam String username,
                              @RequestParam(required = false, defaultValue = "0") Integer current,
                              @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(MamUser::getUsername, username);
-        Page<MamUser> userList = userService.page(new Page<MamUser>(current, pageSize), queryWrapper);
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(SysUser::getUsername, username);
+        Page<SysUser> userList = userService.page(new Page<SysUser>(current, pageSize), queryWrapper);
         return R.success(userList);
     }
 
     @GetMapping("/query/cataloger")
     public R queryCatalogerByName(String username) {
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamUser::getRole, "ROLE_CATALOGER")
-                .like(MamUser::getUsername, username)
-                .select(MamUser::getAccount, MamUser::getUsername);
-        List<MamUser> mamUserList = userService.list(queryWrapper);
-        return R.success(mamUserList);
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getRole, "ROLE_CATALOGER")
+                .like(SysUser::getUsername, username)
+                .select(SysUser::getAccount, SysUser::getUsername);
+        List<SysUser> sysUserList = userService.list(queryWrapper);
+        return R.success(sysUserList);
     }
 
     @GetMapping("/query/auditor")
     public R queryAuditorByName(String username) {
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamUser::getRole, "ROLE_AUDITOR")
-                .like(MamUser::getUsername, username)
-                .select(MamUser::getAccount, MamUser::getUsername);
-        List<MamUser> mamUserList = userService.list(queryWrapper);
-        return R.success(mamUserList);
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getRole, "ROLE_AUDITOR")
+                .like(SysUser::getUsername, username)
+                .select(SysUser::getAccount, SysUser::getUsername);
+        List<SysUser> sysUserList = userService.list(queryWrapper);
+        return R.success(sysUserList);
     }
 
     /**
@@ -179,7 +179,7 @@ public class UserController {
                            @RequestParam(required = false, defaultValue = "1") Integer isAsc,
                            @RequestParam(required = false, defaultValue = "0") Integer current,
                            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        Page<MamUser> users = userService.queryUserList(status, order, isAsc, current, pageSize);
+        Page<SysUser> users = userService.queryUserList(status, order, isAsc, current, pageSize);
         return R.success(users);
     }
 }

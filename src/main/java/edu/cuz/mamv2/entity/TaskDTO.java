@@ -1,6 +1,5 @@
 package edu.cuz.mamv2.entity;
 
-import edu.cuz.mamv2.entity.dto.VideoDTO;
 import lombok.Data;
 
 /**
@@ -8,7 +7,6 @@ import lombok.Data;
  * @date 2022/4/9 14:58
  */
 @Data
-public class TaskDTO {
-    private MamTask taskInfo;
-    private VideoDTO videoInfo;
+public class TaskDTO extends SysTask {
+    private VideoInfo videoInfo;
 }

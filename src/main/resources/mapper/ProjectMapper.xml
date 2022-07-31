@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.cuz.mamv2.mapper.ProjectMapper">
 
-    <select id="selectUserProjectsPage" resultType="edu.cuz.mamv2.entity.MamProject">
+    <select id="selectUserProjectsPage" resultType="edu.cuz.mamv2.entity.SysProject">
         select id,
                name,
                createTime,
@@ -19,5 +19,5 @@
                 or auditor = #{account})
         )
     </select>
-    <select id="selectProjectsPageByUser" resultType="edu.cuz.mamv2.entity.MamProject"></select>
+    <select id="selectProjectsPageByUser" resultType="edu.cuz.mamv2.entity.SysProject"></select>
 </mapper>

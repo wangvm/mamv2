@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import edu.cuz.mamv2.entity.MamUser;
+import edu.cuz.mamv2.entity.SysUser;
 import edu.cuz.mamv2.mapper.UserMapper;
 import edu.cuz.mamv2.service.UserService;
 import org.apache.ibatis.session.ExecutorType;
@@ -28,7 +28,7 @@ import java.util.List;
  * @since 2022/01/17 10:56
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, MamUser> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements UserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -37,22 +37,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, MamUser> implements
 
 
     @Override
-    public void saveIgnoreBatch(List<MamUser> mamUsers) {
+    public void saveIgnoreBatch(List<SysUser> sysUsers) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-        for (MamUser mamUser: mamUsers) {
-            mapper.saveIgnoreUser(mamUser);
+        for (SysUser sysUser: sysUsers) {
+            mapper.saveIgnoreUser(sysUser);
         }
         sqlSession.commit();
     }
 
     @Override
-    public Page<MamUser> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize) {
-        QueryWrapper<MamUser> queryWrapper = new QueryWrapper<>();
+    public Page<SysUser> queryUserList(Integer status, String order, Integer isAsc, Integer current, Integer pageSize) {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("account", "createTime", "password", "role", "username")
                 .eq("deleted", status)
                 .orderBy(true, isAsc > 0 ? true : false, order);
-        Page<MamUser> page = userMapper.selectPage(new Page<MamUser>(current, pageSize, true),
+        Page<SysUser> page = userMapper.selectPage(new Page<SysUser>(current, pageSize, true),
                 queryWrapper);
         return page;
     }
@@ -60,16 +60,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, MamUser> implements
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询到指定用户名的用户信息
-        LambdaQueryWrapper<MamUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MamUser::getAccount, username);
-        MamUser mamUser = userMapper.selectOne(queryWrapper);
-        if (mamUser == null) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, username);
+        SysUser sysUser = userMapper.selectOne(queryWrapper);
+        if (sysUser == null) {
             throw new BadCredentialsException("账户或密码错误");
         }
         // 获取用户权限，并将其添加到GrantedAuthority中
         ArrayList<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(mamUser.getRole());
+        SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(sysUser.getRole());
         grantedAuthorities.add(grantedAuthority);
-        return new org.springframework.security.core.userdetails.User(username, mamUser.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(username, sysUser.getPassword(), grantedAuthorities);
     }
 }

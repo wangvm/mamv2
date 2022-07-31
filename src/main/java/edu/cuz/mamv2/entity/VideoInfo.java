@@ -1,5 +1,6 @@
-package edu.cuz.mamv2.entity.dto;
+package edu.cuz.mamv2.entity;
 
+import edu.cuz.mamv2.entity.dto.VideoSize;
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -13,7 +14,7 @@ import org.springframework.data.elasticsearch.annotations.Mapping;
  */
 @Data
 @Document(indexName = "videoinfo", createIndex = true)
-public class VideoDTO {
+public class VideoInfo {
 
     /**
      * 数据id

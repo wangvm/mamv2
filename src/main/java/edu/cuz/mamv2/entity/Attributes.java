@@ -1,4 +1,4 @@
-package edu.cuz.mamv2.entity.dto;
+package edu.cuz.mamv2.entity;
 
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Field;

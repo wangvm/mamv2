@@ -1,4 +1,4 @@
-package edu.cuz.mamv2.entity.dto;
+package edu.cuz.mamv2.entity;
 
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -6,6 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,27 +16,9 @@ import java.util.List;
  */
 @Data
 @Document(indexName = "program", createIndex = false)
-public class ProgramDTO implements Serializable {
-    public ProgramDTO() {
+public class MamProgram implements Serializable {
+    public MamProgram() {
         menu = new Menu();
-        title = new Attributes();
-        description = new Attributes();
-        debutDate = new Attributes();
-        programType = new Attributes();
-        creator = new Attributes();
-        contributor = new Attributes();
-        programForm = new Attributes();
-        column = new Attributes();
-        color = new Attributes();
-        system = new Attributes();
-        audioChannel = new Attributes();
-        aspectRatio = new Attributes();
-        subtitleForm = new Attributes();
-        startPoint = new Attributes();
-        outPoint = new Attributes();
-        keyFrames = new ArrayList<Frame>();
-        sourceAcquiringMethod = new Attributes();
-        sourceProvider = new Attributes();
     }
 
     /**
@@ -56,77 +39,77 @@ public class ProgramDTO implements Serializable {
      * 正题名
      */
     @Field(index = true, analyzer = "ik_max_word", store = true)
-    private Attributes title;
+    private String title;
     /**
      * 内容描述
      */
     @Field(index = true, analyzer = "ik_max_word")
-    private Attributes description;
+    private String description;
     /**
      * 首播日期
      */
     @Field(index = false)
-    private Attributes debutDate;
+    private Date debutDate;
     /**
      * 节目类型
      */
     @Field(index = false)
-    private Attributes programType;
+    private String programType;
     /**
      * 创建者
      */
     @Field(index = false)
-    private Attributes creator;
+    private String creator;
     /**
      * 其他责任者
      */
     @Field(index = false)
-    private Attributes contributor;
+    private String contributor;
     /**
      * 节目形态
      */
     @Field(index = false)
-    private Attributes programForm;
+    private String programForm;
     /**
      * 栏目
      */
     @Field(index = true)
-    private Attributes column;
+    private String column;
     /**
      * 色彩
      */
     @Field(index = false)
-    private Attributes color;
+    private String color;
     /**
      * 制式
      */
     @Field(index = false)
-    private Attributes system;
+    private String system;
     /**
      * 声道格式
      */
     @Field(index = false)
-    private Attributes audioChannel;
+    private String audioChannel;
     /**
      * 画面宽高比
      */
     @Field(index = false)
-    private Attributes aspectRatio;
+    private String aspectRatio;
     /**
      * 字幕形式
      */
     @Field(index = false)
-    private Attributes subtitleForm;
+    private String subtitleForm;
     /**
      * 入点
      */
     @Field(index = false)
-    private Attributes startPoint;
+    private Long startPoint;
     /**
      * 出点
      */
     @Field(index = false)
-    private Attributes outPoint;
+    private Long outPoint;
     /**
      * 关键帧, value：关键帧图片地址
      */
@@ -136,10 +119,10 @@ public class ProgramDTO implements Serializable {
      * 资料获取方式
      */
     @Field(index = false)
-    private Attributes sourceAcquiringMethod;
+    private String sourceAcquiringMethod;
     /**
      * 提供者
      */
     @Field(index = false)
-    private Attributes sourceProvider;
+    private String sourceProvider;
 }

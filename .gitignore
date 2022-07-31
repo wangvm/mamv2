@@ -9,7 +9,7 @@ target/
 .apt_generated
 .classpath
 .factorypath
-.mamProject
+.sysProject
 .settings
 .springBeans
 .sts4-cache

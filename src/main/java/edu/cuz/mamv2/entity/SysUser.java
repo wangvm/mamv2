@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("mam_user")
-public class MamUser implements Serializable {
+public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

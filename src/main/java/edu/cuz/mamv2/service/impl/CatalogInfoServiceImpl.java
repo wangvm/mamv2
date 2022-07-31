@@ -1,7 +1,12 @@
 package edu.cuz.mamv2.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import edu.cuz.mamv2.entity.MamFragment;
+import edu.cuz.mamv2.entity.MamProgram;
+import edu.cuz.mamv2.entity.MamScenes;
+import edu.cuz.mamv2.entity.Menu;
 import edu.cuz.mamv2.entity.dto.*;
 import edu.cuz.mamv2.exception.ServiceException;
 import edu.cuz.mamv2.repository.FragmentRepository;
@@ -49,24 +54,24 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
 
 
     @Override
-    public ProgramDTO addProgramRecord(ProgramDTO program) {
-        Optional<ProgramDTO> programDTO = programRepository.findByTaskId(program.getTaskId());
+    public MamProgram addProgramRecord(MamProgram program) {
+        Optional<MamProgram> programDTO = programRepository.findByTaskId(program.getTaskId());
         if (programDTO.isPresent()) {
             throw new ServiceException("任务已存在");
         }
-        ProgramDTO save = programRepository.save(program);
+        MamProgram save = programRepository.save(program);
         return save;
     }
 
     @Override
-    public FragmentDTO addFragmentRecord(FragmentDTO fragment) {
-        FragmentDTO save = fragmentRepository.save(fragment);
+    public MamFragment addFragmentRecord(MamFragment fragment) {
+        MamFragment save = fragmentRepository.save(fragment);
         return save;
     }
 
     @Override
-    public ScenesDTO addScenesRecord(ScenesDTO scenese) {
-        ScenesDTO save = scenesRepository.save(scenese);
+    public MamScenes addScenesRecord(MamScenes scenese) {
+        MamScenes save = scenesRepository.save(scenese);
         return save;
     }
 
@@ -88,14 +93,14 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     public R getCatalogRecord(String record, String catalogId) {
         switch (record) {
             case "fragment":
-                Optional<FragmentDTO> fragment = fragmentRepository.findById(catalogId);
+                Optional<MamFragment> fragment = fragmentRepository.findById(catalogId);
                 if (fragment.isPresent()) {
                     return R.success(fragment);
                 } else {
                     return R.error("数据不存在");
                 }
             case "scenes":
-                Optional<ScenesDTO> scenes = scenesRepository.findById(catalogId);
+                Optional<MamScenes> scenes = scenesRepository.findById(catalogId);
                 if (scenes.isPresent()) {
                     return R.success(scenes.get());
                 } else {
@@ -132,27 +137,29 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
             String id = hit.getId();
             Map<String, Object> map = hit.getSourceAsMap();
             Menu menu = JSONObject.parseObject(JSON.toJSONString(map.get("menu")), Menu.class);
-            MenuVO menuVO = new MenuVO(id, menu);
+            MenuVO menuVO = new MenuVO();
+            BeanUtil.copyProperties(menu, menuVO);
+            menuVO.setCatalogId(id);
             menus.add(menuVO);
         }
         return menus;
     }
 
     @Override
-    public ProgramDTO updateProgramRecord(ProgramDTO program) {
-        ProgramDTO save = programRepository.save(program);
+    public MamProgram updateProgramRecord(MamProgram program) {
+        MamProgram save = programRepository.save(program);
         return save;
     }
 
     @Override
-    public FragmentDTO updateFragmentRecord(FragmentDTO fragment) {
-        FragmentDTO save = fragmentRepository.save(fragment);
+    public MamFragment updateFragmentRecord(MamFragment fragment) {
+        MamFragment save = fragmentRepository.save(fragment);
         return save;
     }
 
     @Override
-    public ScenesDTO updateScenesRecord(ScenesDTO scenese) {
-        ScenesDTO save = scenesRepository.save(scenese);
+    public MamScenes updateScenesRecord(MamScenes scenese) {
+        MamScenes save = scenesRepository.save(scenese);
         return save;
     }
 
@@ -172,8 +179,8 @@ public class CatalogInfoServiceImpl implements CatalogInfoService {
     }
 
     @Override
-    public ProgramDTO getProgramRecord(String catalogId, Long taskId) {
-        Optional<ProgramDTO> program;
+    public MamProgram getProgramRecord(String catalogId, Long taskId) {
+        Optional<MamProgram> program;
         if (catalogId == null) {
             program = programRepository.findByTaskId(taskId);
         } else {

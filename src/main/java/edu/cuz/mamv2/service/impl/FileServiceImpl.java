@@ -2,8 +2,8 @@ package edu.cuz.mamv2.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
-import edu.cuz.mamv2.entity.MamTask;
-import edu.cuz.mamv2.entity.dto.VideoDTO;
+import edu.cuz.mamv2.entity.SysTask;
+import edu.cuz.mamv2.entity.VideoInfo;
 import edu.cuz.mamv2.exception.ServiceException;
 import edu.cuz.mamv2.extension.VideoExtenison;
 import edu.cuz.mamv2.mapper.TaskMapper;
@@ -72,7 +72,7 @@ public class FileServiceImpl implements FileService {
         if (CONTENTTYPE.equals(uploadVideo.getContentType())) {
             // 视频源文件名
             String originalFilename = uploadVideo.getOriginalFilename();
-            VideoDTO dto = videoRepository.findByFileName(originalFilename);
+            VideoInfo dto = videoRepository.findByFileName(originalFilename);
             if (dto != null) {
                 throw new ServiceException("视频已存在");
             }
@@ -129,10 +129,10 @@ public class FileServiceImpl implements FileService {
      * @return {@link R}
      */
     @Override
-    public VideoDTO getVideoInfo(String taskId) {
-        MamTask mamTask = taskMapper.selectById(taskId);
-        String videoInfoId = mamTask.getVideoInfoId();
-        Optional<VideoDTO> videoDTO = videoRepository.findById(videoInfoId);
+    public VideoInfo getVideoInfo(String taskId) {
+        SysTask sysTask = taskMapper.selectById(taskId);
+        String videoInfoId = sysTask.getVideoInfoId();
+        Optional<VideoInfo> videoDTO = videoRepository.findById(videoInfoId);
         return videoDTO.get();
     }
 
@@ -143,9 +143,9 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public Page<VideoDTO> getVideoList(Integer pageSize, Integer pageIndex) {
+    public Page<VideoInfo> getVideoList(Integer pageSize, Integer pageIndex) {
         // 从es中查询视频列表
-        Page<VideoDTO> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
+        Page<VideoInfo> page = videoRepository.findAll(PageRequest.of(pageIndex, pageSize));
         // todo 封装一个分页返回类
         return page;
     }
@@ -158,7 +158,7 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<VideoDTO> searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
+    public List<VideoInfo> searchVideoByName(String filename, Integer pageIndex, Integer pageSize) {
         // 通过es的match查询关键词返回结果，默认返回5条
         // 构造查询条件
         SearchSourceBuilder builder = new SearchSourceBuilder();
@@ -189,9 +189,9 @@ public class FileServiceImpl implements FileService {
                 response.getHits().getTotalHits(),
                 response.getHits().getMaxScore());
         // 组装查询结果
-        ArrayList<VideoDTO> videos = new ArrayList<>();
+        ArrayList<VideoInfo> videos = new ArrayList<>();
         for (SearchHit hit: response.getHits().getHits()) {
-            VideoDTO videoDTO = JSONObject.parseObject(hit.getSourceAsString(), VideoDTO.class);
+            VideoInfo videoDTO = JSONObject.parseObject(hit.getSourceAsString(), VideoInfo.class);
             videoDTO.setId(hit.getId());
             videos.add(videoDTO);
         }
@@ -221,7 +221,7 @@ public class FileServiceImpl implements FileService {
         } catch (EncoderException e) {
             throw new ServiceException("获取视频信息失败");
         }
-        VideoDTO videoDTO = new VideoDTO();
+        VideoInfo videoDTO = new VideoInfo();
         videoDTO.setAddress(serverpath + "resource/video/" + target.getName());
         videoDTO.setFileName(filename);
         VideoSize size = info.getVideo().getSize();
@@ -230,7 +230,7 @@ public class FileServiceImpl implements FileService {
         videoDTO.setDuration(info.getDuration());
         videoDTO.setAudioChannel(info.getAudio().getChannels());
         // 保存视频信息到到es中
-        VideoDTO save = videoRepository.save(videoDTO);
+        VideoInfo save = videoRepository.save(videoDTO);
         return save.getId();
     }
 }

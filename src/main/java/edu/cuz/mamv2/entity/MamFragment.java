@@ -1,26 +1,22 @@
-package edu.cuz.mamv2.entity.dto;
+package edu.cuz.mamv2.entity;
 
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
 
 /**
- * 场景层实体
+ * 片段层实体
  * @author VM
- * @date 2022/3/4 16:41
+ * @date 2022/3/4 16:26
  */
 @Data
-@Document(indexName = "scenes", createIndex = false)
-public class ScenesDTO {
-    public ScenesDTO() {
+@Document(indexName = "fragment", createIndex = false)
+public class MamFragment {
+    public MamFragment() {
         menu = new Menu();
-        title = new Attributes();
-        description = new Attributes();
-        subtitleForm = new Attributes();
-        startPoint = new Attributes();
-        outPoint = new Attributes();
     }
 
     /**
@@ -41,30 +37,55 @@ public class ScenesDTO {
      * 题名
      */
     @Field(index = true, analyzer = "ik_max_word", store = true)
-    private Attributes title;
+    private String title;
     /**
      * 描述
      */
     @Field(index = true, analyzer = "ik_max_word")
-    private Attributes description;
+    private String description;
+    /**
+     * 创建者
+     */
+    @Field(index = false)
+    private String creator;
+    /**
+     * 其他责任者
+     */
+    @Field(index = false)
+    private String contributor;
     /**
      * 字母形式
      */
     @Field(index = false)
-    private Attributes subtitleForm;
+    private String subtitleForm;
     /**
      * 入点
      */
     @Field(index = false)
-    private Attributes startPoint;
+    private Long startPoint;
     /**
      * 出点
      */
     @Field(index = false)
-    private Attributes outPoint;
+    private Long outPoint;
+    /**
+     * 资料获取方式
+     */
+    @Field(index = false)
+    private String sourceAcquiringMethod;
+    /**
+     * 提供者
+     */
+    @Field(index = false)
+    private String sourceProvider;
     /**
      * 关键帧, value：关键帧图片地址
      */
     @Field(index = false)
     private List<Frame> keyFrames;
+    /**
+     * 提取的字幕
+     */
+    @Field(type = FieldType.Text, index = false)
+    private String subtitle;
 }
